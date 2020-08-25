@@ -78,3 +78,6 @@
 
 ​			This piece shown on the screen based on this property.
 
+#### 7) Remove
+
+​			Click to remove this piece from flare pieces list.
