@@ -46,6 +46,8 @@
 
 ​	Lens flares based on a series of lined up sprites. So that we need to set every sprite pieces in flare assets. Click the separated atlas piece to create new flare piece. You can see following settings added in Inspector view.
 
+![BlockSettings](https://github.com/Reguluz/ImageBed/blob/master/BlockSettings.png)
+
 #### 1) Index
 
 ​			This solution search piece by setting index.you will find the index of every blocks on the board if you haven't chosen a sprite atlas. You can change this option to switch the piece you will use.
