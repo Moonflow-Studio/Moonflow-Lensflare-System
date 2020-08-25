@@ -26,19 +26,19 @@
 
 ​	![ChangeModel](https://github.com/Reguluz/ImageBed/blob/master/ChangeModel.png)
 
-	#### 		1) Texture
+#### 1) Texture
 
 ​			Choose the flare atlas you need.
 
-	#### 		2) Fade With Scale
+#### 2) Fade With Scale
 
 ​			Lens flare will change the sprite scale while they are fading in or 	fading out
 
-	#### 		3) Fade With Alpha
+#### 3) Fade With Alpha
 
 ​			Lens flare will change the sprite Alpha while they are fading in or 	fading out
 
-	#### 		4) TextureLayout
+#### 4) TextureLayout
 
 ​			There are several prepared model to slicing atlas, you are easily to find the difference between them. Choose the right one so that your atlas will not be separated incorrectly. __Other implementation methods are in research.__
 
@@ -46,19 +46,19 @@
 
 ​	Lens flares based on a series of lined up sprites. So that we need to set every sprite pieces in flare assets. Click the separated atlas piece to create new flare piece. You can see following settings added in Inspector view.
 
-	#### 		1) Index
+#### 1) Index
 
 ​			This solution search piece by setting index.you will find the index of every blocks on the board if you haven't chosen a sprite atlas. You can change this option to switch the piece you will use.
 
-	  #### 		2) Rotation
+#### 2) Rotation
 
 ​			If chosen, this piece will rotate along with light source while it is moving in view.
 
-	#### 		3) LightColor
+#### 3) LightColor
 
 ​			If chosen, this piece will be influenced by the color and intensity of light source;
 
-	#### 		4) Offset
+#### 4) Offset
 
 ​		    It controls the position where this piece will finally shown on screen.
 
@@ -68,11 +68,11 @@
 
 ​			value = 0, this piece will coincide with the center of display screen.
 
-		#### 		5) Color
+#### 5) Color
 
 ​			You can overlying a color to change the result of this piece( coexistence with light source color)
 
-	#### 		6) Scale
+#### 6) Scale
 
 ​			This piece shown on the screen based on this property.
 
