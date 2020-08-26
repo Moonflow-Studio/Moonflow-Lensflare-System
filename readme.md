@@ -1,5 +1,9 @@
 ### Universal Render Pipeline Lens Flare System
 
+This is a _Lens flare_ render system by render quad meshes in front of your camera. So it can be used in any render pipeline.
+
+These system support __multiple__ lens flares at the same time, and __each flare line cost one draw call__.
+
 ### 1. Setup
 
 ​	Download this repository to your computer.
