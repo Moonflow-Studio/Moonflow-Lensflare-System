@@ -31,7 +31,6 @@ public class URPLensFlare : MonoBehaviour
     private List<Color> _totalColor;
     private List<int> _totalTriangle;
 
-    // private static readonly int STATIC_BaseMap = Shader.PropertyToID("_MainTex");
     private static readonly int STATIC_BaseMap = Shader.PropertyToID("_BaseMap");
     private static readonly float DISTANCE = 10f;
 
