@@ -26,7 +26,7 @@ public enum FlareTexModel
    _1L2M8S = 4,
 }
 [Serializable]
-public class URPFlareAsset : ScriptableObject
+public class URPFlareAssetModel : ScriptableObject
 {
    public Texture2D flareSprite;
    public bool fadeWithScale;
@@ -34,14 +34,14 @@ public class URPFlareAsset : ScriptableObject
    public List<SpriteData> spriteBlocks;
    public FlareTexModel flareTexModel;
    
-   [MenuItem("Assets/Create URPFlareData")]
-   static void CreateFlareData()
+   [MenuItem("Assets/Create URPFlareData split by model")]
+   static void CreateFlareDataModel()
    {
       string path = "";
       Object obj = Selection.activeObject;
       path = obj == null ? "Assets" : AssetDatabase.GetAssetPath(obj.GetInstanceID());
 
-      ScriptableObject flareData = CreateInstance<URPFlareAsset>();
+      ScriptableObject flareData = CreateInstance<URPFlareAssetModel>();
       string t = path + "//" + "Flare.asset";
       if (!Directory.Exists(t)) 
       {
@@ -50,27 +50,76 @@ public class URPFlareAsset : ScriptableObject
       }
       else
       {
-         LoopCreateFlareAsset(1, path);
+         LoopCreateFlareAssetModel(1, path);
          return;
       }
       AssetDatabase.Refresh();
    }
    
-   static void LoopCreateFlareAsset(int serial, string path)
+   static void LoopCreateFlareAssetModel(int serial, string path)
    {
       string t = path + "//" + "Flare("+serial+").asset";
       Debug.Log("Create Asset " + t);
-      ScriptableObject flareData = CreateInstance<URPFlareAsset>();
+      ScriptableObject flareData = CreateInstance<URPFlareAssetModel>();
       if (!Directory.Exists(t)) 
       {
          AssetDatabase.CreateAsset(flareData, t);
       }
       else
       {
-         LoopCreateFlareAsset(serial + 1, path);
+         LoopCreateFlareAssetModel(serial + 1, path);
+         return;
+      }
+      AssetDatabase.Refresh();
+   }
+}
+
+
+[Serializable]
+public class URPFlareAssetFree : ScriptableObject
+{
+   public Texture2D flareSprite;
+   public bool fadeWithScale;
+   public bool fadeWithAlpha;
+   public List<SpriteData> spriteBlocks;
+   public FlareTexModel flareTexModel;
+   
+   [MenuItem("Assets/Create URPFlareData split by SpriteEditor")]
+   static void CreateFlareDataFree()
+   {
+      string path = "";
+      Object obj = Selection.activeObject;
+      path = obj == null ? "Assets" : AssetDatabase.GetAssetPath(obj.GetInstanceID());
+
+      ScriptableObject flareData = CreateInstance<URPFlareAssetFree>();
+      string t = path + "//" + "Flare.asset";
+      if (!Directory.Exists(t)) 
+      {
+         Debug.Log("Create Asset " + t);
+         AssetDatabase.CreateAsset(flareData, t);
+      }
+      else
+      {
+         LoopCreateFlareAssetFree(1, path);
          return;
       }
       AssetDatabase.Refresh();
    }
    
+   static void LoopCreateFlareAssetFree(int serial, string path)
+   {
+      string t = path + "//" + "Flare("+serial+").asset";
+      Debug.Log("Create Asset " + t);
+      ScriptableObject flareData = CreateInstance<URPFlareAssetFree>();
+      if (!Directory.Exists(t)) 
+      {
+         AssetDatabase.CreateAsset(flareData, t);
+      }
+      else
+      {
+         LoopCreateFlareAssetFree(serial + 1, path);
+         return;
+      }
+      AssetDatabase.Refresh();
+   }
 }

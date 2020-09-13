@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(URPFlareAsset))]
-public class URPFlareAssetEditor : Editor
+
+[CustomEditor(typeof(URPFlareAssetModel))]
+public class URPFlareAssetModelEditor : UnityEditor.Editor
 {
-    private URPFlareAsset _targetAsset;
-    private URPFlareAssetEditor ins;
+    private URPFlareAssetModel _targetAsset;
+    private URPFlareAssetModelEditor _ins;
     private List<bool> _tablelist;
 
     private static readonly List<Rect>[] STATIC_FlareRectModel = new[]
@@ -82,7 +80,7 @@ public class URPFlareAssetEditor : Editor
 
     private void Awake()
     {
-        _targetAsset = target as URPFlareAsset;
+        _targetAsset = target as URPFlareAssetModel;
         _tablelist = new List<bool>();
     }
     public override void OnInspectorGUI()
@@ -96,7 +94,7 @@ public class URPFlareAssetEditor : Editor
         _targetAsset.fadeWithAlpha = EditorGUILayout.Toggle("Fade With Alpha", _targetAsset.fadeWithAlpha);
         _targetAsset.flareTexModel = (FlareTexModel)EditorGUILayout.EnumPopup("Texture Layout", _targetAsset.flareTexModel);
         PaintTable();
-        
+    
         for (int i = 0; i < _tablelist.Count; i++)
         {
             if (_tablelist[i])
@@ -114,7 +112,7 @@ public class URPFlareAssetEditor : Editor
             }
         }
 
-        
+    
         for (int i = 0; i < _targetAsset.spriteBlocks.Count;)
         {
             EditorGUILayout.Space(5);
@@ -147,7 +145,7 @@ public class URPFlareAssetEditor : Editor
 
         if (EditorGUI.EndChangeCheck())
         {
-           
+       
         }
         Undo.RecordObject(_targetAsset, "Change Flare Asset Data");
     }
@@ -173,7 +171,7 @@ public class URPFlareAssetEditor : Editor
                 }
                 EditorGUILayout.EndVertical();
                 break;
-            
+        
             case FlareTexModel._4x4:
                 EditorGUILayout.BeginVertical();
                 for (int i = 0; i < 4; i++)
@@ -194,75 +192,75 @@ public class URPFlareAssetEditor : Editor
                 }
                 EditorGUILayout.EndVertical();
                 break;
-            
+        
             case FlareTexModel._Mega:
                 Rect m1 = (Rect)EditorGUILayout.BeginHorizontal();
                 _tablelist.Add(GUILayout.Button("1", new[] {GUILayout.Height(125), GUILayout.Width(125)}));
+            {
+                EditorGUILayout.BeginVertical();
                 {
-                    EditorGUILayout.BeginVertical();
+                    
+                    Rect m3 = (Rect)EditorGUILayout.BeginHorizontal();
+                    _tablelist.Add(GUILayout.Button("2", new []{GUILayout.Height(60), GUILayout.Width(60)}));
+                    _tablelist.Add(GUILayout.Button("3", new []{GUILayout.Height(60), GUILayout.Width(60)}));
+                    EditorGUILayout.EndHorizontal();
+                    Rect m4 = (Rect)EditorGUILayout.BeginHorizontal();
+                    _tablelist.Add(GUILayout.Button("4", new []{GUILayout.Height(60), GUILayout.Width(60)}));
+                    _tablelist.Add(GUILayout.Button("5",new []{GUILayout.Height(60), GUILayout.Width(60)}));
+                    EditorGUILayout.EndHorizontal();
+                    if (_targetAsset.flareSprite)
                     {
-                        
-                        Rect m3 = (Rect)EditorGUILayout.BeginHorizontal();
-                        _tablelist.Add(GUILayout.Button("2", new []{GUILayout.Height(60), GUILayout.Width(60)}));
-                        _tablelist.Add(GUILayout.Button("3", new []{GUILayout.Height(60), GUILayout.Width(60)}));
-                        EditorGUILayout.EndHorizontal();
-                        Rect m4 = (Rect)EditorGUILayout.BeginHorizontal();
-                        _tablelist.Add(GUILayout.Button("4", new []{GUILayout.Height(60), GUILayout.Width(60)}));
-                        _tablelist.Add(GUILayout.Button("5",new []{GUILayout.Height(60), GUILayout.Width(60)}));
-                        EditorGUILayout.EndHorizontal();
-                        if (_targetAsset.flareSprite)
-                        {
-                            GUI.DrawTextureWithTexCoords(new Rect(m1.position.x , m1.position.y, 124, 124), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][0]);
-                            GUI.DrawTextureWithTexCoords(new Rect(m3.position.x , m3.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][1]);
-                            GUI.DrawTextureWithTexCoords(new Rect(m3.position.x  + m3.height * 1.05f, m3.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][2]);
-                            GUI.DrawTextureWithTexCoords(new Rect(m4.position.x , m4.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][3]);
-                            GUI.DrawTextureWithTexCoords(new Rect(m4.position.x + m4.height * 1.05f , m4.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][4]);
-                        }
+                        GUI.DrawTextureWithTexCoords(new Rect(m1.position.x , m1.position.y, 124, 124), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][0]);
+                        GUI.DrawTextureWithTexCoords(new Rect(m3.position.x , m3.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][1]);
+                        GUI.DrawTextureWithTexCoords(new Rect(m3.position.x  + m3.height * 1.05f, m3.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][2]);
+                        GUI.DrawTextureWithTexCoords(new Rect(m4.position.x , m4.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][3]);
+                        GUI.DrawTextureWithTexCoords(new Rect(m4.position.x + m4.height * 1.05f , m4.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][4]);
                     }
-                    EditorGUILayout.EndVertical();
                 }
+                EditorGUILayout.EndVertical();
+            }
                 EditorGUILayout.EndHorizontal();
                 Rect m2 = (Rect)EditorGUILayout.BeginHorizontal();
                 _tablelist.Add(GUILayout.Button("6", new[] {GUILayout.Height(125), GUILayout.Width(125)}));
+            {
+                EditorGUILayout.BeginVertical();
                 {
-                    EditorGUILayout.BeginVertical();
+                    Rect m5 = (Rect)EditorGUILayout.BeginHorizontal();
+                    _tablelist.Add(GUILayout.Button("7", new []{GUILayout.Height(60), GUILayout.Width(60)}));
+                    _tablelist.Add(GUILayout.Button("8",new []{GUILayout.Height(60), GUILayout.Width(60)}));
+                    EditorGUILayout.EndHorizontal();
+                    Rect m6 = (Rect)EditorGUILayout.BeginHorizontal();
+                    _tablelist.Add(GUILayout.Button("9" ,new []{GUILayout.Height(60), GUILayout.Width(60)}));
+                    Rect m10 = (Rect)EditorGUILayout.BeginVertical();
                     {
-                        Rect m5 = (Rect)EditorGUILayout.BeginHorizontal();
-                        _tablelist.Add(GUILayout.Button("7", new []{GUILayout.Height(60), GUILayout.Width(60)}));
-                        _tablelist.Add(GUILayout.Button("8",new []{GUILayout.Height(60), GUILayout.Width(60)}));
-                        EditorGUILayout.EndHorizontal();
-                        Rect m6 = (Rect)EditorGUILayout.BeginHorizontal();
-                        _tablelist.Add(GUILayout.Button("9" ,new []{GUILayout.Height(60), GUILayout.Width(60)}));
-                        Rect m10 = (Rect)EditorGUILayout.BeginVertical();
-                        {
-                            _tablelist.Add(GUILayout.Button("10", new []{GUILayout.Height(30), GUILayout.Width(60)}));
-                            _tablelist.Add(GUILayout.Button("11", new []{GUILayout.Height(13f), GUILayout.Width(60)}));
-                            _tablelist.Add(GUILayout.Button("12", new []{GUILayout.Height(7.5f), GUILayout.Width(60)}));
-                            _tablelist.Add(GUILayout.Button("13", new []{GUILayout.Height(7.5f), GUILayout.Width(60)}));
-                        }
-                        EditorGUILayout.EndVertical();
-                        EditorGUILayout.EndHorizontal();
-                        if (_targetAsset.flareSprite)
-                        {
-                            GUI.DrawTextureWithTexCoords(new Rect(m2.position.x , m2.position.y, 124, 124), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][5]);
-                            
-                            GUI.DrawTextureWithTexCoords(new Rect(m5.position.x , m5.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][6]);
-                            GUI.DrawTextureWithTexCoords(new Rect(m5.position.x  + m5.height * 1.05f, m5.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][7]);
-                            GUI.DrawTextureWithTexCoords(new Rect(m6.position.x , m6.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][8]);
-                            
-                            GUI.DrawTextureWithTexCoords(new Rect(m6.position.x + m6.height, m10.position.y, 59, 29), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][9]);
-                            GUI.DrawTextureWithTexCoords(new Rect(m6.position.x + m6.height, m10.position.y + m6.height * 0.5f, 59, 12), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][10]);
-                            GUI.DrawTextureWithTexCoords(new Rect(m6.position.x + m6.height, m10.position.y + m6.height * 0.75f, 59, 7), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][11]);
-                            GUI.DrawTextureWithTexCoords(new Rect(m6.position.x + m6.height, m10.position.y + m6.height * 0.9f, 59, 7), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][12]);
-                        }
+                        _tablelist.Add(GUILayout.Button("10", new []{GUILayout.Height(30), GUILayout.Width(60)}));
+                        _tablelist.Add(GUILayout.Button("11", new []{GUILayout.Height(13f), GUILayout.Width(60)}));
+                        _tablelist.Add(GUILayout.Button("12", new []{GUILayout.Height(7.5f), GUILayout.Width(60)}));
+                        _tablelist.Add(GUILayout.Button("13", new []{GUILayout.Height(7.5f), GUILayout.Width(60)}));
                     }
                     EditorGUILayout.EndVertical();
+                    EditorGUILayout.EndHorizontal();
+                    if (_targetAsset.flareSprite)
+                    {
+                        GUI.DrawTextureWithTexCoords(new Rect(m2.position.x , m2.position.y, 124, 124), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][5]);
+                        
+                        GUI.DrawTextureWithTexCoords(new Rect(m5.position.x , m5.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][6]);
+                        GUI.DrawTextureWithTexCoords(new Rect(m5.position.x  + m5.height * 1.05f, m5.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][7]);
+                        GUI.DrawTextureWithTexCoords(new Rect(m6.position.x , m6.position.y, 59, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][8]);
+                        
+                        GUI.DrawTextureWithTexCoords(new Rect(m6.position.x + m6.height, m10.position.y, 59, 29), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][9]);
+                        GUI.DrawTextureWithTexCoords(new Rect(m6.position.x + m6.height, m10.position.y + m6.height * 0.5f, 59, 12), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][10]);
+                        GUI.DrawTextureWithTexCoords(new Rect(m6.position.x + m6.height, m10.position.y + m6.height * 0.75f, 59, 7), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][11]);
+                        GUI.DrawTextureWithTexCoords(new Rect(m6.position.x + m6.height, m10.position.y + m6.height * 0.9f, 59, 7), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][12]);
+                    }
                 }
+                EditorGUILayout.EndVertical();
+            }
                 EditorGUILayout.EndHorizontal();
                 break;
-            
+        
             case FlareTexModel._1L4S:
-                
+            
                 Rect r31 = (Rect)EditorGUILayout.BeginVertical();
                 _tablelist.Add(GUILayout.Button("1", new[] {GUILayout.Height(125), GUILayout.Width(125)}));
                 Rect r32 = (Rect)EditorGUILayout.BeginHorizontal();
@@ -283,7 +281,7 @@ public class URPFlareAssetEditor : Editor
                     GUI.DrawTextureWithTexCoords(new Rect(r33.position.x + r33.height + 2, r33.position.y, 60, 59), _targetAsset.flareSprite, STATIC_FlareRectModel[texIndex][4]);
                 }
                 break;
-            
+        
             case FlareTexModel._1L2M8S:
                 Rect r41 = (Rect)EditorGUILayout.BeginVertical();
                 _tablelist.Add(GUILayout.Button("1", new[] {GUILayout.Height(125), GUILayout.Width(125)}));
@@ -294,7 +292,7 @@ public class URPFlareAssetEditor : Editor
 
                 for (int i = 0; i < 2; i++)
                 {
-                    
+                
                     Rect r42 = (Rect)EditorGUILayout.BeginHorizontal();
                     _tablelist.Add(GUILayout.Button((i * 5 + 2).ToString(), new[] {GUILayout.Height(60), GUILayout.Width(60)}));
                     EditorGUILayout.BeginVertical();

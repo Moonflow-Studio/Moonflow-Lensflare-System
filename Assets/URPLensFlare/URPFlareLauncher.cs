@@ -10,7 +10,7 @@ public class URPFlareLauncher : MonoBehaviour
 {
     public bool directionalLight;
     public bool useLightIntensity;
-    public URPFlareAsset asset;
+    public URPFlareAssetModel asset;
     [HideInInspector]public Light lightSource;
     
     private void OnEnable()
