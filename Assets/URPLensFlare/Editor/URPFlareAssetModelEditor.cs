@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
-
 
 [CustomEditor(typeof(URPFlareAssetModel))]
 public class URPFlareAssetModelEditor : UnityEditor.Editor
@@ -95,6 +97,7 @@ public class URPFlareAssetModelEditor : UnityEditor.Editor
         _targetAsset.flareTexModel = (FlareTexModel)EditorGUILayout.EnumPopup("Texture Layout", _targetAsset.flareTexModel);
         PaintTable();
     
+        
         for (int i = 0; i < _tablelist.Count; i++)
         {
             if (_tablelist[i])
@@ -111,8 +114,7 @@ public class URPFlareAssetModelEditor : UnityEditor.Editor
                 });
             }
         }
-
-    
+        
         for (int i = 0; i < _targetAsset.spriteBlocks.Count;)
         {
             EditorGUILayout.Space(5);
@@ -152,6 +154,7 @@ public class URPFlareAssetModelEditor : UnityEditor.Editor
     public void PaintTable()
     {
         if(_tablelist!=null)_tablelist.Clear();
+        if(_targetAsset.spriteBlocks == null)_targetAsset.spriteBlocks = new List<SpriteData>();
         int texIndex = (int) _targetAsset.flareTexModel;
         switch (_targetAsset.flareTexModel)
         {

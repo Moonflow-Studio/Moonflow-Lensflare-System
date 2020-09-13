@@ -42,7 +42,7 @@ public class URPFlareAssetModel : ScriptableObject
       path = obj == null ? "Assets" : AssetDatabase.GetAssetPath(obj.GetInstanceID());
 
       ScriptableObject flareData = CreateInstance<URPFlareAssetModel>();
-      string t = path + "//" + "Flare.asset";
+      string t = path + "//" + "FlareByModel.asset";
       if (!Directory.Exists(t)) 
       {
          Debug.Log("Create Asset " + t);
@@ -58,7 +58,7 @@ public class URPFlareAssetModel : ScriptableObject
    
    static void LoopCreateFlareAssetModel(int serial, string path)
    {
-      string t = path + "//" + "Flare("+serial+").asset";
+      string t = path + "//" + "FlareByModel("+serial+").asset";
       Debug.Log("Create Asset " + t);
       ScriptableObject flareData = CreateInstance<URPFlareAssetModel>();
       if (!Directory.Exists(t)) 
@@ -92,7 +92,7 @@ public class URPFlareAssetFree : ScriptableObject
       path = obj == null ? "Assets" : AssetDatabase.GetAssetPath(obj.GetInstanceID());
 
       ScriptableObject flareData = CreateInstance<URPFlareAssetFree>();
-      string t = path + "//" + "Flare.asset";
+      string t = path + "//" + "FlareBySpriteEditor.asset";
       if (!Directory.Exists(t)) 
       {
          Debug.Log("Create Asset " + t);
@@ -108,7 +108,7 @@ public class URPFlareAssetFree : ScriptableObject
    
    static void LoopCreateFlareAssetFree(int serial, string path)
    {
-      string t = path + "//" + "Flare("+serial+").asset";
+      string t = path + "//" + "FlareBySpriteEditor("+serial+").asset";
       Debug.Log("Create Asset " + t);
       ScriptableObject flareData = CreateInstance<URPFlareAssetFree>();
       if (!Directory.Exists(t)) 
