@@ -13,7 +13,6 @@ public struct FlareState
     public int fadeState;    //0:normal, 1:fade in, 2: fade out, 3:unrendered
 }
 
-[ExecuteInEditMode]
 public class URPLensFlare : MonoBehaviour
 {
     public bool DebugMode;

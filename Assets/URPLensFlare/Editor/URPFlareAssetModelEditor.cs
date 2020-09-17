@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 [CustomEditor(typeof(URPFlareAssetModel))]
-public class URPFlareAssetModelEditor : UnityEditor.Editor
+public class URPFlareAssetModelEditor : Editor
 {
     private URPFlareAssetModel _targetAsset;
     private URPFlareAssetModelEditor _ins;
@@ -79,6 +81,45 @@ public class URPFlareAssetModelEditor : UnityEditor.Editor
             new Rect(0.75f, 0f, 0.25f,  0.125f)
         }
     };
+    
+    [MenuItem("Assets/Create URPFlareData split by model")]
+    static void CreateFlareDataModel()
+    {
+        string path = "";
+        Object obj = Selection.activeObject;
+        path = obj == null ? "Assets" : AssetDatabase.GetAssetPath(obj.GetInstanceID());
+
+        ScriptableObject flareData = CreateInstance<URPFlareAssetModel>();
+        string t = path + "//" + "FlareByModel.asset";
+        if (!Directory.Exists(t)) 
+        {
+            Debug.Log("Create Asset " + t);
+            AssetDatabase.CreateAsset(flareData, t);
+        }
+        else
+        {
+            LoopCreateFlareAssetModel(1, path);
+            return;
+        }
+        AssetDatabase.Refresh();
+    }
+   
+    static void LoopCreateFlareAssetModel(int serial, string path)
+    {
+        string t = path + "//" + "FlareByModel("+serial+").asset";
+        Debug.Log("Create Asset " + t);
+        ScriptableObject flareData = CreateInstance<URPFlareAssetModel>();
+        if (!Directory.Exists(t)) 
+        {
+            AssetDatabase.CreateAsset(flareData, t);
+        }
+        else
+        {
+            LoopCreateFlareAssetModel(serial + 1, path);
+            return;
+        }
+        AssetDatabase.Refresh();
+    }
 
     private void Awake()
     {
@@ -199,7 +240,7 @@ public class URPFlareAssetModelEditor : UnityEditor.Editor
             case FlareTexModel._Mega:
                 Rect m1 = (Rect)EditorGUILayout.BeginHorizontal();
                 _tablelist.Add(GUILayout.Button("1", new[] {GUILayout.Height(125), GUILayout.Width(125)}));
-            {
+            
                 EditorGUILayout.BeginVertical();
                 {
                     
@@ -221,11 +262,11 @@ public class URPFlareAssetModelEditor : UnityEditor.Editor
                     }
                 }
                 EditorGUILayout.EndVertical();
-            }
+            
                 EditorGUILayout.EndHorizontal();
                 Rect m2 = (Rect)EditorGUILayout.BeginHorizontal();
                 _tablelist.Add(GUILayout.Button("6", new[] {GUILayout.Height(125), GUILayout.Width(125)}));
-            {
+            
                 EditorGUILayout.BeginVertical();
                 {
                     Rect m5 = (Rect)EditorGUILayout.BeginHorizontal();
@@ -258,7 +299,7 @@ public class URPFlareAssetModelEditor : UnityEditor.Editor
                     }
                 }
                 EditorGUILayout.EndVertical();
-            }
+            
                 EditorGUILayout.EndHorizontal();
                 break;
         
