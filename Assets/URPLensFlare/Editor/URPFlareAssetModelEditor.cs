@@ -188,7 +188,7 @@ public class URPFlareAssetModelEditor : Editor
 
         if (EditorGUI.EndChangeCheck())
         {
-       
+            AssetDatabase.SaveAssets();
         }
         Undo.RecordObject(_targetAsset, "Change Flare Asset Data");
     }

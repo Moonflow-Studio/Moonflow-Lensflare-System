@@ -31,7 +31,7 @@ public class URPLensFlare : MonoBehaviour
     private List<int> _totalTriangle;
 
     private static readonly int STATIC_BaseMap = Shader.PropertyToID("_BaseMap");
-    private static readonly float DISTANCE = 10f;
+    private static readonly float DISTANCE = 1f;
 
     private void Awake()
     {
@@ -235,7 +235,7 @@ public class URPLensFlare : MonoBehaviour
             if (flareDatas[lightIndex].fadeoutScale > 0)
             {
                 URPFlareLauncher observer = lightSource[lightIndex];
-                Texture2D tex = observer.asset.flareSprite;
+                Texture2D tex = observer.tex;//observer.asset.flareSprite;
                 float angle = (45 +Vector2.SignedAngle(Vector2.up, new Vector2(flareDatas[lightIndex].sourceCoordinate.x - _halfScreen.x, flareDatas[lightIndex].sourceCoordinate.y - _halfScreen.y))) / 180 * Mathf.PI;
                 for (int i = 0; i < lightSource[lightIndex].asset.spriteBlocks.Count; i++)
                 {
@@ -298,6 +298,7 @@ public class URPLensFlare : MonoBehaviour
                 _totalMesh[count].uv = _totalUv.ToArray();
                 _totalMesh[count].triangles = _totalTriangle.ToArray();
                 _totalMesh[count].colors = _totalColor.ToArray();
+                Debug.Log(observer.asset.flareSprite.width);
                 _propertyBlock.SetTexture(STATIC_BaseMap, observer.asset.flareSprite);
 
                 Graphics.DrawMesh(_totalMesh[count], center, Quaternion.identity, material, 0, _camera, 0, _propertyBlock);
