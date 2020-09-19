@@ -12,8 +12,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58d4cc9e6e0eb5c40baddc88489c5bf0, type: 3}
   m_Name: FlareAsset
   m_EditorClassIdentifier: 
-  flareSprite: {fileID: 0}
+  flareSprite: {fileID: 2800000, guid: 4ec72aaf0f037d44cb56f2870ef693cd, type: 3}
   fadeWithScale: 0
   fadeWithAlpha: 0
-  spriteBlocks: []
-  flareTexModel: 0
+  spriteBlocks:
+  - useLightColor: 0
+    useRotation: 0
+    index: 2
+    block:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.5
+      height: 0.25
+    scale: 1
+    offset: 0.59
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - useLightColor: 0
+    useRotation: 0
+    index: 3
+    block:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.5
+      height: 0.25
+    scale: 1
+    offset: -0.5
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - useLightColor: 0
+    useRotation: 0
+    index: 1
+    block:
+      serializedVersion: 2
+      x: 0
+      y: 0.25
+      width: 0.5
+      height: 0.25
+    scale: 1
+    offset: -1.08
+    color: {r: 1, g: 1, b: 1, a: 1}
+  flareTexModel: 3
