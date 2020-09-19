@@ -25,14 +25,15 @@ public enum FlareTexModel
    _1L4S = 3,
    _1L2M8S = 4,
 }
+[CreateAssetMenu(fileName = "FlareAsset", menuName = "Create FlareAsset split by model")]
 [Serializable]
-public class URPFlareAssetModel : ScriptableObject
+public class URPFlareAsset : ScriptableObject
 {
-   public Texture2D flareSprite;
-   public bool fadeWithScale;
-   public bool fadeWithAlpha;
-   public List<SpriteData> spriteBlocks;
-   public FlareTexModel flareTexModel;
+   [SerializeField]public Texture2D flareSprite;
+   [SerializeField]public bool fadeWithScale;
+   [SerializeField]public bool fadeWithAlpha;
+   [SerializeField]public List<SpriteData> spriteBlocks;
+   [SerializeField]public FlareTexModel flareTexModel;
 }
 
 
