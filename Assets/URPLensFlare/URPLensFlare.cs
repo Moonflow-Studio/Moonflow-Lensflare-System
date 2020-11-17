@@ -13,11 +13,12 @@ public struct FlareState
     public int fadeState;    //0:normal, 1:fade in, 2: fade out, 3:unrendered
 }
 
+
 public class URPLensFlare : MonoBehaviour
 {
     public bool DebugMode;
     [Space(10)]
-    [HideInInspector]public List<URPFlareLauncher> lightSource;
+    public List<URPFlareLauncher> lightSource;
     public Material material;
     public float fadeoutTime;
     [HideInInspector]public List<FlareState> flareDatas;
@@ -174,10 +175,14 @@ public class URPLensFlare : MonoBehaviour
         }
         else
         {
-            if (Physics.Raycast(_camera.transform.position,
-                (lightSource[lightIndex].directionalLight 
-                    ?  -lightSource[lightIndex].transform.forward
-                    :lightSource[lightIndex].transform.position - _camera.transform.position )))
+            var camPos = _camera.transform.position;
+            var targetPos = lightSource[lightIndex].directionalLight
+                ? -lightSource[lightIndex].transform.forward * Mathf.Infinity
+                : lightSource[lightIndex].transform.position;
+            Ray ray = new Ray(camPos, targetPos - camPos );
+            RaycastHit hit;
+            Physics.Raycast(ray, out hit);
+            if (Vector3.Distance(hit.point, camPos) < Vector3.Distance(targetPos, camPos))
             {
                 return false;
             }
@@ -298,7 +303,6 @@ public class URPLensFlare : MonoBehaviour
                 _totalMesh[count].uv = _totalUv.ToArray();
                 _totalMesh[count].triangles = _totalTriangle.ToArray();
                 _totalMesh[count].colors = _totalColor.ToArray();
-                Debug.Log(observer.asset.flareSprite.width);
                 _propertyBlock.SetTexture(STATIC_BaseMap, observer.asset.flareSprite);
 
                 Graphics.DrawMesh(_totalMesh[count], center, Quaternion.identity, material, 0, _camera, 0, _propertyBlock);

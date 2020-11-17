@@ -12,6 +12,12 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ![QQ截图20200909014225](https://raw.githubusercontent.com/Reguluz/ImageBed/master/20200909014307.png)
 
+
+
+### 0. SpriteEditor version special settings
+
+​	In this version, flare atlas is separated by Sprite Editor, you need to change the "Texture Type" setting of atlas to "Sprite(2D and UI)", and change "Sprite Mode" setting to "Multiple",then separate the atlas to several sprite cell by yourself. 
+
 ### 1. Setup
 
 ​	Download this repository to your computer.

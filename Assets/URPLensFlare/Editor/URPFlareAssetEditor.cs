@@ -8,10 +8,10 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 [CustomEditor(typeof(URPFlareAsset))]
-public class URPFlareAssetModelEditor : Editor
+public class URPFlareAssetEditor : Editor
 {
     private URPFlareAsset _targetAsset;
-    private URPFlareAssetModelEditor _ins;
+    private URPFlareAssetEditor _ins;
     private List<bool> _tablelist;
 
     private static readonly List<Rect>[] STATIC_FlareRectModel = new[]
@@ -130,12 +130,12 @@ public class URPFlareAssetModelEditor : Editor
     {
         EditorGUI.BeginChangeCheck();
         // base.OnInspectorGUI();
-        _targetAsset.flareSprite = (Texture2D)EditorGUILayout.ObjectField("Texture", _targetAsset.flareSprite, typeof(Texture2D),true);
+        
         // _targetAsset.directionalLight = EditorGUILayout.Toggle("Directional Light", _targetAsset.directionalLight);
         // _targetAsset.useLightIntensity = EditorGUILayout.Toggle("Use Light Intensity", _targetAsset.useLightIntensity);
         _targetAsset.fadeWithScale = EditorGUILayout.Toggle("Fade With Scale", _targetAsset.fadeWithScale);
         _targetAsset.fadeWithAlpha = EditorGUILayout.Toggle("Fade With Alpha", _targetAsset.fadeWithAlpha);
-        _targetAsset.flareTexModel = (FlareTexModel)EditorGUILayout.EnumPopup("Texture Layout", _targetAsset.flareTexModel);
+        PaintSplitType();
         PaintTable();
     
         
@@ -191,6 +191,13 @@ public class URPFlareAssetModelEditor : Editor
             AssetDatabase.SaveAssets();
         }
         Undo.RecordObject(_targetAsset, "Change Flare Asset Data");
+    }
+
+    public void PaintSplitType()
+    {
+        
+        _targetAsset.flareSprite = (Texture2D)EditorGUILayout.ObjectField("Texture", _targetAsset.flareSprite, typeof(Texture2D),true);
+        _targetAsset.flareTexModel = (FlareTexModel)EditorGUILayout.EnumPopup("Texture Layout", _targetAsset.flareTexModel);
     }
     public void PaintTable()
     {

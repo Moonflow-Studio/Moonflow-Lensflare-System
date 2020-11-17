@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Reflection;
 [RequireComponent(typeof(Light))]
+
 public class URPFlareLauncher : MonoBehaviour
 {
     public bool directionalLight;
