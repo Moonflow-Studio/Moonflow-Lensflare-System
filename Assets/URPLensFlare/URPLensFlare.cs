@@ -21,7 +21,7 @@ public class URPLensFlare : MonoBehaviour
     public List<URPFlareLauncher> lightSource;
     public Material material;
     public float fadeoutTime;
-    [HideInInspector]public List<FlareState> flareDatas;
+    public List<FlareState> flareDatas;
     private Camera _camera;
     private Vector2 _halfScreen;
     private MaterialPropertyBlock _propertyBlock;
@@ -177,13 +177,14 @@ public class URPLensFlare : MonoBehaviour
         {
             var camPos = _camera.transform.position;
             var targetPos = lightSource[lightIndex].directionalLight
-                ? -lightSource[lightIndex].transform.forward * Mathf.Infinity
+                ? -lightSource[lightIndex].transform.forward * 10000f
                 : lightSource[lightIndex].transform.position;
             Ray ray = new Ray(camPos, targetPos - camPos );
             RaycastHit hit;
             Physics.Raycast(ray, out hit);
             if (Vector3.Distance(hit.point, camPos) < Vector3.Distance(targetPos, camPos))
             {
+                if (hit.point == Vector3.zero) return true;
                 return false;
             }
             return true;
