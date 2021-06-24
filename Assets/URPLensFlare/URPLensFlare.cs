@@ -91,10 +91,10 @@ public class URPLensFlare : MonoBehaviour
     private void Update()
     {
         _halfScreen = new Vector2(_camera.scaledPixelWidth / 2 + _camera.pixelRect.xMin, _camera.scaledPixelHeight / 2 + _camera.pixelRect.yMin);
-        foreach (Mesh mesh in _totalMesh)
-        {
-            mesh.Clear();
-        } 
+        // foreach (Mesh mesh in _totalMesh)
+        // {
+        //     mesh.Clear();
+        // } 
         _totalMesh.Clear();
         for (int i = 0; i < lightSource.Count; i++)
         {
