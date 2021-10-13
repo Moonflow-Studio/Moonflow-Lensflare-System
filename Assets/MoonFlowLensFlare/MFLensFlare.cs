@@ -14,11 +14,11 @@ public struct FlareState
 }
 
 
-public class URPLensFlare : MonoBehaviour
+public class MFLensFlare : MonoBehaviour
 {
     public bool DebugMode;
     [Space(10)]
-    public List<URPFlareLauncher> lightSource;
+    public List<MFFlareLauncher> lightSource;
     public Material material;
     public float fadeoutTime;
     public List<FlareState> flareDatas;
@@ -49,12 +49,12 @@ public class URPLensFlare : MonoBehaviour
         }
         _propertyBlock = new MaterialPropertyBlock();
     }
-    private FlareState InitFlareData(URPFlareLauncher urpFlareLauncher)
+    private FlareState InitFlareData(MFFlareLauncher mfFlareLauncher)
     {
         FlareState state = new FlareState
         {
             sourceCoordinate = Vector3.zero,
-            flareWorldPosCenter = new Vector3[urpFlareLauncher.asset.spriteBlocks.Count],
+            flareWorldPosCenter = new Vector3[mfFlareLauncher.assetModel.spriteBlocks.Count],
             // edgeScale = 1,
             fadeoutScale = 0,
             fadeState = 1
@@ -62,14 +62,14 @@ public class URPLensFlare : MonoBehaviour
         return state;
     }
 
-    public void AddLight(URPFlareLauncher urpFlareLauncher)
+    public void AddLight(MFFlareLauncher mfFlareLauncher)
     {
         if (DebugMode)
         {
-            Debug.Log("Add Light " + urpFlareLauncher.gameObject.name + " to FlareList");
+            Debug.Log("Add Light " + mfFlareLauncher.gameObject.name + " to FlareList");
         }
-        lightSource.Add(urpFlareLauncher);
-        flareDatas.Add(InitFlareData(urpFlareLauncher));
+        lightSource.Add(mfFlareLauncher);
+        flareDatas.Add(InitFlareData(mfFlareLauncher));
         if (_totalMesh == null)
         {
             _totalMesh = new List<Mesh>();
@@ -203,14 +203,14 @@ public class URPLensFlare : MonoBehaviour
 
     void CalculateMeshData(ref FlareState state, int lightIndex)
     {
-        Vector3[] oneFlareLine = new Vector3[lightSource[lightIndex].asset.spriteBlocks.Count];
-        bool[] useLightColor = new bool[lightSource[lightIndex].asset.spriteBlocks.Count];
-        for (int i = 0; i < lightSource[lightIndex].asset.spriteBlocks.Count; i++)
+        Vector3[] oneFlareLine = new Vector3[lightSource[lightIndex].assetModel.spriteBlocks.Count];
+        bool[] useLightColor = new bool[lightSource[lightIndex].assetModel.spriteBlocks.Count];
+        for (int i = 0; i < lightSource[lightIndex].assetModel.spriteBlocks.Count; i++)
         {
             Vector2 realSourceCoordinateOffset = new Vector2(state.sourceCoordinate.x - _halfScreen.x, state.sourceCoordinate.y - _halfScreen.y);
-            Vector2 realOffset = realSourceCoordinateOffset * lightSource[lightIndex].asset.spriteBlocks[i].offset;
+            Vector2 realOffset = realSourceCoordinateOffset * lightSource[lightIndex].assetModel.spriteBlocks[i].offset;
             oneFlareLine[i] = new Vector3(_halfScreen.x + realOffset.x, _halfScreen.y + realOffset.y, state.sourceCoordinate.z);
-            useLightColor[i] = lightSource[lightIndex].asset.spriteBlocks[i].useLightColor;
+            useLightColor[i] = lightSource[lightIndex].assetModel.spriteBlocks[i].useLightColor;
         }
         state.flareWorldPosCenter = oneFlareLine;
     }
@@ -240,17 +240,17 @@ public class URPLensFlare : MonoBehaviour
             vertColors.Clear();
             if (flareDatas[lightIndex].fadeoutScale > 0)
             {
-                URPFlareLauncher observer = lightSource[lightIndex];
+                MFFlareLauncher observer = lightSource[lightIndex];
                 Texture2D tex = observer.tex;//observer.asset.flareSprite;
                 float angle = (45 +Vector2.SignedAngle(Vector2.up, new Vector2(flareDatas[lightIndex].sourceCoordinate.x - _halfScreen.x, flareDatas[lightIndex].sourceCoordinate.y - _halfScreen.y))) / 180 * Mathf.PI;
-                for (int i = 0; i < lightSource[lightIndex].asset.spriteBlocks.Count; i++)
+                for (int i = 0; i < lightSource[lightIndex].assetModel.spriteBlocks.Count; i++)
                 {
-                    Rect rect = observer.asset.spriteBlocks[i].block;
+                    Rect rect = observer.assetModel.spriteBlocks[i].block;
                     Vector2 halfSize = new Vector2(
-                        tex.width * rect.width / 2 * observer.asset.spriteBlocks[i].scale * (observer.asset.fadeWithScale ? ( flareDatas[lightIndex].fadeoutScale * 0.5f + 0.5f) : 1), 
-                        tex.height * rect.height / 2 * observer.asset.spriteBlocks[i].scale * (observer.asset.fadeWithScale ? ( flareDatas[lightIndex].fadeoutScale * 0.5f + 0.5f) : 1));
+                        tex.width * rect.width / 2 * observer.assetModel.spriteBlocks[i].scale * (observer.assetModel.fadeWithScale ? ( flareDatas[lightIndex].fadeoutScale * 0.5f + 0.5f) : 1), 
+                        tex.height * rect.height / 2 * observer.assetModel.spriteBlocks[i].scale * (observer.assetModel.fadeWithScale ? ( flareDatas[lightIndex].fadeoutScale * 0.5f + 0.5f) : 1));
                     Vector3 flarePos = flareDatas[lightIndex].flareWorldPosCenter[i];
-                    if (observer.asset.spriteBlocks[i].useRotation)
+                    if (observer.assetModel.spriteBlocks[i].useRotation)
                     {
                         float magnitude = Mathf.Sqrt(halfSize.x * halfSize.x + halfSize.y * halfSize.y);
                         float cos = magnitude * Mathf.Cos(angle);
@@ -280,16 +280,16 @@ public class URPLensFlare : MonoBehaviour
                     tri.Add(i * 4 + 2);
                     tri.Add(i * 4 + 3);
                     
-                    Color vertexAddColor = observer.asset.spriteBlocks[i].color;
-                    Color lightColor = observer.asset.spriteBlocks[i].useLightColor
+                    Color vertexAddColor = observer.assetModel.spriteBlocks[i].color;
+                    Color lightColor = observer.assetModel.spriteBlocks[i].useLightColor
                         ? observer.GetComponent<Light>().color
                         : new Color(1, 1, 1, 1);
                     lightColor *= observer.useLightIntensity ? observer.GetComponent<Light>().intensity : 1;
                     
                     vertexAddColor *= new Vector4(lightColor.r, lightColor.g, lightColor.b, 
-                        (1.5f - Mathf.Abs(observer.asset.spriteBlocks[i].offset)) / 1.5f
+                        (1.5f - Mathf.Abs(observer.assetModel.spriteBlocks[i].offset)) / 1.5f
                         * (1 - Mathf.Min(1, new Vector2(flarePos.x - _halfScreen.x, flarePos.y - _halfScreen.y).magnitude / new Vector2(_halfScreen.x, _halfScreen.y).magnitude))
-                    ) * ((observer.asset.fadeWithAlpha ? flareDatas[lightIndex].fadeoutScale: 1));
+                    ) * ((observer.assetModel.fadeWithAlpha ? flareDatas[lightIndex].fadeoutScale: 1));
                     vertexAddColor = vertexAddColor.linear;
                     vertColors.Add(vertexAddColor);
                     vertColors.Add(vertexAddColor);
@@ -304,7 +304,7 @@ public class URPLensFlare : MonoBehaviour
                 _totalMesh[count].uv = _totalUv.ToArray();
                 _totalMesh[count].triangles = _totalTriangle.ToArray();
                 _totalMesh[count].colors = _totalColor.ToArray();
-                _propertyBlock.SetTexture(STATIC_BaseMap, observer.asset.flareSprite);
+                _propertyBlock.SetTexture(STATIC_BaseMap, observer.assetModel.flareSprite);
 
                 Graphics.DrawMesh(_totalMesh[count], center, Quaternion.identity, material, 0, _camera, 0, _propertyBlock);
 
@@ -314,7 +314,7 @@ public class URPLensFlare : MonoBehaviour
     }
     void DebugDrawMeshPos(int lightIndex)
     {
-        for (int i = 0; i < lightSource[lightIndex].asset.spriteBlocks.Count; i++)
+        for (int i = 0; i < lightSource[lightIndex].assetModel.spriteBlocks.Count; i++)
         {
             Debug.DrawLine(_camera.transform.position, _camera.ScreenToWorldPoint(flareDatas[lightIndex].flareWorldPosCenter[i]));
         }

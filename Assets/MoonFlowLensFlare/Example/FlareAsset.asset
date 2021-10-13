@@ -52,4 +52,16 @@ MonoBehaviour:
     scale: 1
     offset: -1.08
     color: {r: 1, g: 1, b: 1, a: 1}
+  - useLightColor: 0
+    useRotation: 0
+    index: 1
+    block:
+      serializedVersion: 2
+      x: 0
+      y: 0.25
+      width: 0.5
+      height: 0.25
+    scale: 1
+    offset: 0
+    color: {r: 1, g: 1, b: 1, a: 1}
   flareTexModel: 3
