@@ -13,18 +13,138 @@ MonoBehaviour:
   m_Name: FlareBySpriteEditor
   m_EditorClassIdentifier: 
   flareSprite: {fileID: 2800000, guid: 3e5c1addf72b4e44183b2274beecbd11, type: 3}
-  fadeWithScale: 0
-  fadeWithAlpha: 0
+  fadeWithScale: 1
+  fadeWithAlpha: 1
   spriteBlocks:
+  - useLightColor: 1
+    useRotation: 0
+    index: 5
+    block:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.125
+    scale: 0.78
+    offset: -0.45
+    color: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 1}
+  - useLightColor: 1
+    useRotation: 0
+    index: 7
+    block:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.125
+      width: 0.25
+      height: 0.125
+    scale: 0.61
+    offset: 0.89
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - useLightColor: 1
+    useRotation: 0
+    index: 4
+    block:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.25
+      width: 0.25
+      height: 0.125
+    scale: 0.84
+    offset: 0.67
+    color: {r: 0.9433962, g: 0.9433962, b: 0.9433962, a: 1}
   - useLightColor: 0
     useRotation: 0
-    index: 0
+    index: 8
+    block:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.125
+    scale: 0.44
+    offset: 0.69
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - useLightColor: 1
+    useRotation: 0
+    index: 9
+    block:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.125
+      width: 0.25
+      height: 0.125
+    scale: 0.42
+    offset: 0.6
+    color: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
+  - useLightColor: 1
+    useRotation: 0
+    index: 6
     block:
       serializedVersion: 2
       x: 0
-      y: 262
-      width: 256
-      height: 250
-    scale: 0
-    offset: 0
-    color: {r: 0, g: 0, b: 0, a: 0}
+      y: 0
+      width: 0.5
+      height: 0.25
+    scale: 0.79
+    offset: -0.82
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - useLightColor: 1
+    useRotation: 0
+    index: 5
+    block:
+      serializedVersion: 2
+      x: 0.5
+      y: 0.25
+      width: 0.25
+      height: 0.125
+    scale: 1
+    offset: -0.75
+    color: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 1}
+  - useLightColor: 1
+    useRotation: 0
+    index: 4
+    block:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.25
+      width: 0.25
+      height: 0.125
+    scale: 2.94
+    offset: -0.98
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - useLightColor: 1
+    useRotation: 0
+    index: 3
+    block:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.375
+      width: 0.25
+      height: 0.125
+    scale: 1
+    offset: -0.39
+    color: {r: 0.9433962, g: 0.9433962, b: 0.9433962, a: 1}
+  - useLightColor: 0
+    useRotation: 0
+    index: 9
+    block:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.125
+      width: 0.25
+      height: 0.125
+    scale: 0.53
+    offset: -0.42
+    color: {r: 0.6226415, g: 0.5703699, b: 0.5433428, a: 1}
+  - useLightColor: 0
+    useRotation: 1
+    index: 10
+    block:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.125
+    scale: 1.21
+    offset: -0.4
+    color: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 1}

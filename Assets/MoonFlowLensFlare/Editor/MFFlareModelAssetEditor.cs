@@ -187,7 +187,7 @@ public class MFFlareModelAssetEditor : Editor
 
         if (EditorGUI.EndChangeCheck())
         {
-            AssetDatabase.SaveAssets();
+            EditorUtility.SetDirty(_targetAssetModel);
         }
         Undo.RecordObject(_targetAssetModel, "Change Flare Asset Data");
     }

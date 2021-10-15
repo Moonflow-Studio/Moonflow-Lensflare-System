@@ -20,6 +20,21 @@ TextureImporter:
   - first:
       213: 4365825945205927291
     second: Flare50mm_5
+  - first:
+      213: 4273877367383709640
+    second: Flare50mm_6
+  - first:
+      213: 3983904466825391187
+    second: Flare50mm_7
+  - first:
+      213: -2407933610978599584
+    second: Flare50mm_8
+  - first:
+      213: 526017677946592219
+    second: Flare50mm_9
+  - first:
+      213: 7574425131732013326
+    second: Flare50mm_10
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -137,9 +152,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 262
+        y: 256
         width: 256
-        height: 250
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,9 +173,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 127
-        width: 129
-        height: 134
+        y: 128
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,10 +193,10 @@ TextureImporter:
       name: Flare50mm_2
       rect:
         serializedVersion: 2
-        x: 129
+        x: 128
         y: 192
-        width: 62
-        height: 63
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -199,10 +214,10 @@ TextureImporter:
       name: Flare50mm_3
       rect:
         serializedVersion: 2
-        x: 194
-        y: 193
-        width: 61
-        height: 59
+        x: 192
+        y: 192
+        width: 64
+        height: 64
       alignment: 9
       pivot: {x: 0.5, y: 0.50000066}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -220,12 +235,12 @@ TextureImporter:
       name: Flare50mm_4
       rect:
         serializedVersion: 2
-        x: 194
-        y: 126
-        width: 62
-        height: 63
+        x: 192
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -233,6 +248,132 @@ TextureImporter:
       bones: []
       spriteID: 70caac01a15633330800000000000000
       internalID: 3689403682371841031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flare50mm_5
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7dee27e097869c30800000000000000
+      internalID: 4365825945205927291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flare50mm_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c7dc7852dcdf4b30800000000000000
+      internalID: 4273877367383709640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flare50mm_7
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 35c2834410ca94730800000000000000
+      internalID: 3983904466825391187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flare50mm_8
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06d95ea732d459ed0800000000000000
+      internalID: -2407933610978599584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flare50mm_9
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdb15978a4acc4700800000000000000
+      internalID: 526017677946592219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flare50mm_10
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e019daab683cd1960800000000000000
+      internalID: 7574425131732013326
       vertices: []
       indices: 
       edges: []

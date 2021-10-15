@@ -5,11 +5,8 @@ using UnityEditor;
 using UnityEngine;
 using Object = System.Object;
 
+[CreateAssetMenu(fileName = "FlareAsset", menuName = "Create FlareAsset split by slicer")]
 [Serializable]
-public class MFFlareAssetFree : ScriptableObject
+public class MFFlareAssetFree : MFFlareAsset
 {
-    public Texture2D flareSprite;
-    public bool fadeWithScale;
-    public bool fadeWithAlpha;
-    public List<MFFlareSpriteData> spriteBlocks;
 }

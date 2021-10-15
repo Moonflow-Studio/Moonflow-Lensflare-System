@@ -62,8 +62,12 @@ public class MFFlareFreeAssetEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        if (GUILayout.Button("Save"))
+        {
+            AssetDatabase.SaveAssets();
+        }
+        EditorGUI.BeginChangeCheck();
         if(_tablelist!=null)_tablelist.Clear();
-        // base.OnInspectorGUI();
         _targetAssetFree.fadeWithScale = EditorGUILayout.Toggle("Fade With Scale", _targetAssetFree.fadeWithScale);
         _targetAssetFree.fadeWithAlpha = EditorGUILayout.Toggle("Fade With Alpha", _targetAssetFree.fadeWithAlpha);
         _targetAssetFree.flareSprite = (Texture2D)EditorGUILayout.ObjectField("Texture", _targetAssetFree.flareSprite, typeof(Texture2D),true);
@@ -106,22 +110,12 @@ public class MFFlareFreeAssetEditor : Editor
                                 new Vector2(58, 58)), 
                             _targetAssetFree.flareSprite, 
                             r);
-        
-                        // EditorGUILayout.ObjectField(_tmpSprites[i], typeof(Sprite), false);
                     }
                 }
                 EditorGUILayout.EndHorizontal();
             }
         }
         EditorGUILayout.Space(30);
-        // for (int i = 0; i < _tmpSprites.Length; i++)
-        // {
-        //     EditorGUILayout.ObjectField($"Sprite{i}",_tmpSprites[i], typeof(Sprite), false);
-        // }
-        // if (GUILayout.Button("Create new flare"))
-        // {
-        //     _targetAssetFree.spriteBlocks.Add(new MFFlareSpriteData());
-        // }
         for (int i = 0; i < _tablelist.Count; i++)
         {
             if (_tablelist[i])
@@ -176,7 +170,7 @@ public class MFFlareFreeAssetEditor : Editor
 
         if (EditorGUI.EndChangeCheck())
         {
-            AssetDatabase.SaveAssets();
+            EditorUtility.SetDirty(_targetAssetFree);
         }
         Undo.RecordObject(_targetAssetFree, "Change Flare Asset Data");
     }

@@ -12,12 +12,8 @@ public enum FlareTexModel
 }
 [CreateAssetMenu(fileName = "FlareAsset", menuName = "Create FlareAsset split by model")]
 [Serializable]
-public class MFFlareAssetModel : ScriptableObject
+public class MFFlareAssetModel : MFFlareAsset
 {
-   [SerializeField]public Texture2D flareSprite;
-   [SerializeField]public bool fadeWithScale;
-   [SerializeField]public bool fadeWithAlpha;
-   [SerializeField]public List<MFFlareSpriteData> spriteBlocks;
    [SerializeField]public FlareTexModel flareTexModel;
 }
 

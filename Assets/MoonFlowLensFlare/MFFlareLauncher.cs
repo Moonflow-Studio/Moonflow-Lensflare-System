@@ -11,7 +11,7 @@ public class MFFlareLauncher : MonoBehaviour
 {
     public bool directionalLight;
     public bool useLightIntensity;
-    [SerializeField]public MFFlareAssetModel assetModel;
+    public MFFlareAsset assetModel;
     [HideInInspector]public Light lightSource;
     [HideInInspector]public Texture2D tex;
     private void OnEnable()
