@@ -30,7 +30,9 @@ public class MFLensFlare : MonoBehaviour
     private List<Vector2> _totalUv;
     private List<Color> _totalColor;
     private List<int> _totalTriangle;
+    private List<Vector4> _screenpos;
 
+    private static readonly int STATIC_FLARESCREENPOS = Shader.PropertyToID("_FlareScreenPos");
     private static readonly int STATIC_BaseMap = Shader.PropertyToID("_BaseMap");
     private static readonly float DISTANCE = 1f;
 
@@ -41,6 +43,7 @@ public class MFLensFlare : MonoBehaviour
         _totalColor = new List<Color>();
         _totalTriangle = new List<int>();
         _totalMesh = new List<Mesh>();
+        _screenpos = new List<Vector4>();
         
         _camera = GetComponent<Camera>();
         if (flareDatas == null)
@@ -92,6 +95,7 @@ public class MFLensFlare : MonoBehaviour
     {
         _halfScreen = new Vector2(_camera.scaledPixelWidth / 2 + _camera.pixelRect.xMin, _camera.scaledPixelHeight / 2 + _camera.pixelRect.yMin);
         _totalMesh.Clear();
+        _screenpos.Clear();
         for (int i = 0; i < lightSource.Count; i++)
         {
             _totalMesh.Add(new Mesh());
@@ -167,22 +171,28 @@ public class MFLensFlare : MonoBehaviour
             || state.sourceCoordinate.x > _camera.pixelRect.xMax || state.sourceCoordinate.y > _camera.pixelRect.yMax
             || Vector3.Dot(lightSource[lightIndex].transform.position - _camera.transform.position, _camera.transform.forward) < 0.25f)
         {
+            _screenpos.Add(Vector4.zero);
             return false;
         }
         else
         {
-            var camPos = _camera.transform.position;
-            var targetPos = lightSource[lightIndex].directionalLight
-                ? -lightSource[lightIndex].transform.forward * 10000f
-                : lightSource[lightIndex].transform.position;
-            Ray ray = new Ray(camPos, targetPos - camPos );
-            RaycastHit hit;
-            Physics.Raycast(ray, out hit);
-            if (Vector3.Distance(hit.point, camPos) < Vector3.Distance(targetPos, camPos))
-            {
-                if (hit.point == Vector3.zero) return true;
-                return false;
-            }
+            // var camPos = _camera.transform.position;
+            // var targetPos = lightSource[lightIndex].directionalLight
+            //     ? -lightSource[lightIndex].transform.forward * 10000f
+            //     : lightSource[lightIndex].transform.position;
+            // Ray ray = new Ray(camPos, targetPos - camPos );
+            // RaycastHit hit;
+            // Physics.Raycast(ray, out hit);
+            // if (Vector3.Distance(hit.point, camPos) < Vector3.Distance(targetPos, camPos))
+            // {
+            //     if (hit.point == Vector3.zero) return true;
+            //     return false;
+            // }
+            Vector4 screenUV = state.sourceCoordinate;
+            screenUV.x = screenUV.x / _camera.pixelWidth;
+            screenUV.y = screenUV.y / _camera.pixelHeight;
+            screenUV.w = lightSource[lightIndex].directionalLight ? 1 : 0;
+            _screenpos.Add(screenUV);
             return true;
         }
     }
@@ -194,7 +204,7 @@ public class MFLensFlare : MonoBehaviour
             ?lightSource[lightIndex].transform.position - lightSource[lightIndex].transform.forward * 10000
             :lightSource[lightIndex].transform.position
             );
-        state.sourceCoordinate = new Vector3(sourceScreenPos.x , sourceScreenPos.y , DISTANCE);
+        state.sourceCoordinate = sourceScreenPos;
     }
 
     void CalculateMeshData(ref FlareState state, int lightIndex)
@@ -205,7 +215,7 @@ public class MFLensFlare : MonoBehaviour
         {
             Vector2 realSourceCoordinateOffset = new Vector2(state.sourceCoordinate.x - _halfScreen.x, state.sourceCoordinate.y - _halfScreen.y);
             Vector2 realOffset = realSourceCoordinateOffset * lightSource[lightIndex].assetModel.spriteBlocks[i].offset;
-            oneFlareLine[i] = new Vector3(_halfScreen.x + realOffset.x, _halfScreen.y + realOffset.y, state.sourceCoordinate.z);
+            oneFlareLine[i] = new Vector3(_halfScreen.x + realOffset.x, _halfScreen.y + realOffset.y, DISTANCE);
             useLightColor[i] = lightSource[lightIndex].assetModel.spriteBlocks[i].useLightColor;
         }
         state.flareWorldPosCenter = oneFlareLine;
@@ -307,6 +317,8 @@ public class MFLensFlare : MonoBehaviour
                 _totalMesh[count].triangles = _totalTriangle.ToArray();
                 _totalMesh[count].colors = _totalColor.ToArray();
                 _propertyBlock.SetTexture(STATIC_BaseMap, observer.assetModel.flareSprite);
+                _propertyBlock.SetVector(STATIC_FLARESCREENPOS, _screenpos[count]);
+                Debug.Log($"{count} : {_screenpos[count]}");
                 Graphics.DrawMesh(_totalMesh[count], center, Quaternion.identity, material, 0, _camera, 0, _propertyBlock);
                 count++;
             }
