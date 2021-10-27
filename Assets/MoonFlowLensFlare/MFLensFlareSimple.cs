@@ -22,6 +22,7 @@ public class MFLensFlareSimple : MonoBehaviour
     private List<int> _totalTriangle;
 
     private static readonly int STATIC_BaseMap = Shader.PropertyToID("_BaseMap");
+    private static readonly int STATIC_FLARESCREENPOS = Shader.PropertyToID("_FlareScreenPos");
     private static readonly float DISTANCE = 1f;
 
     private void Awake()
@@ -126,16 +127,20 @@ public class MFLensFlareSimple : MonoBehaviour
         }
         else
         {
-            var camPos = _camera.transform.position;
-            var targetPos = -directionalLight.transform.forward * 10000f;
-            Ray ray = new Ray(camPos, targetPos - camPos );
-            RaycastHit hit;
-            Physics.Raycast(ray, out hit);
-            if (Vector3.Distance(hit.point, camPos) < Vector3.Distance(targetPos, camPos))
-            {
-                if (hit.point == Vector3.zero) return true;
-                return false;
-            }
+            Vector3 screenUV = state.sourceCoordinate;
+            screenUV.x = screenUV.x / _camera.pixelWidth;
+            screenUV.y = screenUV.y / _camera.pixelHeight;
+            _propertyBlock.SetVector(STATIC_FLARESCREENPOS, screenUV);
+            // var camPos = _camera.transform.position;
+            // var targetPos = -directionalLight.transform.forward * 10000f;
+            // Ray ray = new Ray(camPos, targetPos - camPos );
+            // RaycastHit hit;
+            // Physics.Raycast(ray, out hit);
+            // if (Vector3.Distance(hit.point, camPos) < Vector3.Distance(targetPos, camPos))
+            // {
+            //     if (hit.point == Vector3.zero) return true;
+            //     return false;
+            // }
             return true;
         }
     }
