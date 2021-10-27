@@ -318,7 +318,6 @@ public class MFLensFlare : MonoBehaviour
                 _totalMesh[count].colors = _totalColor.ToArray();
                 _propertyBlock.SetTexture(STATIC_BaseMap, observer.assetModel.flareSprite);
                 _propertyBlock.SetVector(STATIC_FLARESCREENPOS, _screenpos[count]);
-                Debug.Log($"{count} : {_screenpos[count]}");
                 Graphics.DrawMesh(_totalMesh[count], center, Quaternion.identity, material, 0, _camera, 0, _propertyBlock);
                 count++;
             }
