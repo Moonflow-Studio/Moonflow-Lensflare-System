@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
-using UnityEditor.VersionControl;
 using UnityEngine;
 
 [CustomEditor(typeof(MFFlareAssetFree))]
@@ -122,7 +121,7 @@ public class MFFlareFreeAssetEditor : Editor
             {
                 _targetAssetFree.spriteBlocks.Add(new MFFlareSpriteData()
                 {
-                    useLightColor = false,
+                    useLightColor = 0,
                     useRotation = false,
                     index = i,
                     block = _tmpSprites[i].rect,
@@ -150,7 +149,7 @@ public class MFFlareFreeAssetEditor : Editor
                 data.block);
             data.index = EditorGUILayout.IntSlider("Index", data.index, 0, _tmpSprites.Length-1);
             data.useRotation = EditorGUILayout.Toggle("Rotation", data.useRotation);
-            data.useLightColor = EditorGUILayout.Toggle("LightColor", data.useLightColor);
+            data.useLightColor = EditorGUILayout.Slider("LightColor", data.useLightColor, 0, 1);
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
             data.offset = EditorGUILayout.Slider("Offset",data.offset, -1.5f, 1f);

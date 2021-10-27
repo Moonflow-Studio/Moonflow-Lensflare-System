@@ -91,10 +91,6 @@ public class MFLensFlare : MonoBehaviour
     private void Update()
     {
         _halfScreen = new Vector2(_camera.scaledPixelWidth / 2 + _camera.pixelRect.xMin, _camera.scaledPixelHeight / 2 + _camera.pixelRect.yMin);
-        // foreach (Mesh mesh in _totalMesh)
-        // {
-        //     mesh.Clear();
-        // } 
         _totalMesh.Clear();
         for (int i = 0; i < lightSource.Count; i++)
         {
@@ -204,7 +200,7 @@ public class MFLensFlare : MonoBehaviour
     void CalculateMeshData(ref FlareState state, int lightIndex)
     {
         Vector3[] oneFlareLine = new Vector3[lightSource[lightIndex].assetModel.spriteBlocks.Count];
-        bool[] useLightColor = new bool[lightSource[lightIndex].assetModel.spriteBlocks.Count];
+        float[] useLightColor = new float[lightSource[lightIndex].assetModel.spriteBlocks.Count];
         for (int i = 0; i < lightSource[lightIndex].assetModel.spriteBlocks.Count; i++)
         {
             Vector2 realSourceCoordinateOffset = new Vector2(state.sourceCoordinate.x - _halfScreen.x, state.sourceCoordinate.y - _halfScreen.y);
@@ -241,7 +237,7 @@ public class MFLensFlare : MonoBehaviour
             if (flareDatas[lightIndex].fadeoutScale > 0)
             {
                 MFFlareLauncher observer = lightSource[lightIndex];
-                Texture2D tex = observer.tex;//observer.asset.flareSprite;
+                Texture2D tex = observer.assetModel.flareSprite;//observer.asset.flareSprite;
                 float angle = (45 +Vector2.SignedAngle(Vector2.up, new Vector2(flareDatas[lightIndex].sourceCoordinate.x - _halfScreen.x, flareDatas[lightIndex].sourceCoordinate.y - _halfScreen.y))) / 180 * Mathf.PI;
                 for (int i = 0; i < lightSource[lightIndex].assetModel.spriteBlocks.Count; i++)
                 {
@@ -281,10 +277,16 @@ public class MFLensFlare : MonoBehaviour
                     tri.Add(i * 4 + 3);
                     
                     Color vertexAddColor = observer.assetModel.spriteBlocks[i].color;
-                    Color lightColor = observer.assetModel.spriteBlocks[i].useLightColor
-                        ? observer.GetComponent<Light>().color
-                        : new Color(1, 1, 1, 1);
-                    lightColor *= observer.useLightIntensity ? observer.GetComponent<Light>().intensity : 1;
+                    Color lightColor = default;
+                    Light source = observer.GetComponent<Light>();
+                    lightColor.r = Mathf.Lerp(1, source.color.r,
+                        observer.assetModel.spriteBlocks[i].useLightColor);
+                    lightColor.g = Mathf.Lerp(1, source.color.g,
+                        observer.assetModel.spriteBlocks[i].useLightColor);
+                    lightColor.b = Mathf.Lerp(1, source.color.b,
+                        observer.assetModel.spriteBlocks[i].useLightColor);
+                    lightColor.a = 1;
+                    lightColor *= observer.useLightIntensity ? source.intensity : 1;
                     
                     vertexAddColor *= new Vector4(lightColor.r, lightColor.g, lightColor.b, 
                         (1.5f - Mathf.Abs(observer.assetModel.spriteBlocks[i].offset)) / 1.5f
@@ -305,9 +307,7 @@ public class MFLensFlare : MonoBehaviour
                 _totalMesh[count].triangles = _totalTriangle.ToArray();
                 _totalMesh[count].colors = _totalColor.ToArray();
                 _propertyBlock.SetTexture(STATIC_BaseMap, observer.assetModel.flareSprite);
-
                 Graphics.DrawMesh(_totalMesh[count], center, Quaternion.identity, material, 0, _camera, 0, _propertyBlock);
-
                 count++;
             }
         }

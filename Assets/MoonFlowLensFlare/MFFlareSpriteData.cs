@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public struct MFFlareSpriteData
 {
-    public bool useLightColor;
+    public float useLightColor;
     public bool useRotation;
     public int index;
     public Rect block;

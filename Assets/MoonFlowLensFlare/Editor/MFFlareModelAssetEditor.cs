@@ -128,11 +128,12 @@ public class MFFlareModelAssetEditor : Editor
     }
     public override void OnInspectorGUI()
     {
+        if (GUILayout.Button("Save"))
+        {
+            AssetDatabase.SaveAssets();
+        }
         EditorGUI.BeginChangeCheck();
-        // base.OnInspectorGUI();
         
-        // _targetAsset.directionalLight = EditorGUILayout.Toggle("Directional Light", _targetAsset.directionalLight);
-        // _targetAsset.useLightIntensity = EditorGUILayout.Toggle("Use Light Intensity", _targetAsset.useLightIntensity);
         _targetAssetModel.fadeWithScale = EditorGUILayout.Toggle("Fade With Scale", _targetAssetModel.fadeWithScale);
         _targetAssetModel.fadeWithAlpha = EditorGUILayout.Toggle("Fade With Alpha", _targetAssetModel.fadeWithAlpha);
         PaintSplitType();
@@ -144,7 +145,7 @@ public class MFFlareModelAssetEditor : Editor
             {
                 _targetAssetModel.spriteBlocks.Add(new MFFlareSpriteData()
                 {
-                    useLightColor = false,
+                    useLightColor = 0,
                     useRotation = false,
                     index = i,
                     block = STATIC_FlareRectModel[(int) _targetAssetModel.flareTexModel][i],
@@ -167,7 +168,7 @@ public class MFFlareModelAssetEditor : Editor
             GUI.DrawTextureWithTexCoords(new Rect(t.position + new Vector2(0,30 * (1- data.block.height/data.block.width)),new Vector2(60,60 * data.block.height / data.block.width)), _targetAssetModel.flareSprite, data.block);
             data.index = EditorGUILayout.IntSlider("Index", data.index, 0, STATIC_FlareRectModel[(int) _targetAssetModel.flareTexModel].Count-1);
             data.useRotation = EditorGUILayout.Toggle("Rotation", data.useRotation);
-            data.useLightColor = EditorGUILayout.Toggle("LightColor", data.useLightColor);
+            data.useLightColor = EditorGUILayout.Slider("LightColor", data.useLightColor, 0, 1);
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
             data.offset = EditorGUILayout.Slider("Offset",data.offset, -1.5f, 1f);
