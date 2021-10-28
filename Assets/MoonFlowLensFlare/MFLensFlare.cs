@@ -33,7 +33,7 @@ public class MFLensFlare : MonoBehaviour
     private List<Vector4> _screenpos;
 
     private static readonly int STATIC_FLARESCREENPOS = Shader.PropertyToID("_FlareScreenPos");
-    private static readonly int STATIC_BaseMap = Shader.PropertyToID("_BaseMap");
+    private static readonly int STATIC_BaseMap = Shader.PropertyToID("_MainTex");
     private static readonly float DISTANCE = 1f;
 
     private void Awake()
@@ -169,7 +169,7 @@ public class MFLensFlare : MonoBehaviour
     {
         if (state.sourceCoordinate.x <  _camera.pixelRect.xMin || state.sourceCoordinate.y < _camera.pixelRect.yMin 
             || state.sourceCoordinate.x > _camera.pixelRect.xMax || state.sourceCoordinate.y > _camera.pixelRect.yMax
-            || Vector3.Dot(lightSource[lightIndex].transform.position - _camera.transform.position, _camera.transform.forward) < 0.25f)
+            || Vector3.Dot(lightSource[lightIndex].directionalLight ? -lightSource[lightIndex].transform.forward : lightSource[lightIndex].transform.position - _camera.transform.position, _camera.transform.forward) < 0.25f)
         {
             _screenpos.Add(Vector4.zero);
             return false;
@@ -201,7 +201,7 @@ public class MFLensFlare : MonoBehaviour
     {
         Vector3 sourceScreenPos = _camera.WorldToScreenPoint(
             lightSource[lightIndex].directionalLight 
-            ?lightSource[lightIndex].transform.position - lightSource[lightIndex].transform.forward * 10000
+            ?_camera.transform.position - lightSource[lightIndex].transform.forward * 10000
             :lightSource[lightIndex].transform.position
             );
         state.sourceCoordinate = sourceScreenPos;

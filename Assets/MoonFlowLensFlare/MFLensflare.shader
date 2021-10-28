@@ -3,11 +3,6 @@ Shader"Moonflow/Lensflare"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest("ZTest", Float) = 1.0
-        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("__src", Float) = 1.0
-        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("__dst", Float) = 0.0
-        [Enum(Off, 0, On, 1)] _ZWrite("__zw", Float) = 1.0
-        [Enum(UnityEngine.Rendering.CullMode)]_Cull("__cull", Float) = 2.0
     }
     SubShader
     {
@@ -24,10 +19,9 @@ Shader"Moonflow/Lensflare"
 
         Pass
         {
-            Blend[_SrcBlend][_DstBlend]
-            ZWrite[_ZWrite]
-            ZTest[_ZTest]
-            Cull[_Cull]
+            Blend One One
+            ZWrite Off
+            ZTest Off
             
             HLSLPROGRAM
             #pragma vertex vert
