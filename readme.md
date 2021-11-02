@@ -2,7 +2,7 @@
 
 
 
-### Universal Render Pipeline Lens Flare System
+### MoonFlow™ Lens Flare System
 
 This is a _Lens flare_ render system by render quad meshes in front of your camera. So it can be used in any render pipeline.
 
@@ -16,13 +16,17 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ### 0. SpriteEditor version special settings
 
-​	In this version, flare atlas is separated by Sprite Editor, you need to change the "Texture Type" setting of atlas to "Sprite(2D and UI)", and change "Sprite Mode" setting to "Multiple",then separate the atlas to several sprite cell by yourself. 
+##### Slice version
+
+​	In this version of asset, the flare atlas is separated by Sprite Editor. You need to change the "Texture Type" setting to  "Sprite(2D and UI)",  then set "Sprite Mode" to "Multiple". If you have installed Sprite Editor on your project, then you can edit it after tap apply at the moment. 
+
+##### cell version
+
+​	In this version, you don't need to slice by yourself, and atlas will be sliced automatically like cell mode of sprite slicer. So you need to set the amount for each axis on _"Cell"_ property.
 
 ### 1. Setup
 
-​	Download this repository to your computer.
-
-​	You should take care that this solution based on URP（with default settings, but it can use in build-in render pipeline by change some code）
+​	Download this repository to your computer.​
 
 ​	Open the project you can see these Files :
 

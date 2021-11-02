@@ -16,11 +16,11 @@
 
 ### 0. 不同类型图集Asset的特殊设置
 
-##### SpriteEditor 版本
+##### Slice 版本
 
 ​	在该Asset版本中, 光晕图集由Sprite Editor进行切割, 你需要修改图集的 "Texture Type"的设置为 "Sprite(2D and UI)", 然后把 "Sprite Mode" 设置为 "Multiple",然后自行切割. 
 
-##### Model版本
+##### Cell 版本
 
 ​	无需手动切割图集，但是图集以cell形式存在，在Asset中需要额外设置cell的横纵向单图数量
 
@@ -82,7 +82,6 @@
 
     资产设置中多了一个Cell的选项，x为图集横向单图数量，y为纵向单图数量
 
-    
 
 ### 4.资产修改 - 创建新的Flare
 
