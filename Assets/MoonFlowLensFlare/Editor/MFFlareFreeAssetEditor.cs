@@ -5,57 +5,57 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(MFFlareAssetFree))]
+[CustomEditor(typeof(MFFlareAssetSlicer))]
 public class MFFlareFreeAssetEditor : Editor
 {
-    private MFFlareAssetFree _targetAssetFree;
-    private MFFlareModelAssetEditor _ins;
+    private MFFlareAssetSlicer _targetAssetSlicer;
+    private MFFlareCellAssetEditor _ins;
     private List<bool> _tablelist;
     private Texture2D _tmp;
     private Sprite[] _tmpSprites;
     
-    [MenuItem("Assets/Create URPFlareData split by SpriteEditor")]
-    static void CreateFlareDataFree()
-    {
-        string path = "";
-        UnityEngine.Object obj = Selection.activeObject;
-        path = obj == null ? "Assets" : AssetDatabase.GetAssetPath(obj.GetInstanceID());
-
-        ScriptableObject flareData = CreateInstance<MFFlareAssetFree>();
-        string t = path + "//" + "FlareBySpriteEditor.asset";
-        if (!Directory.Exists(t)) 
-        {
-            Debug.Log("Create Asset " + t);
-            AssetDatabase.CreateAsset(flareData, t);
-        }
-        else
-        {
-            LoopCreateFlareAssetFree(1, path);
-            return;
-        }
-        AssetDatabase.Refresh();
-    }
-   
-    static void LoopCreateFlareAssetFree(int serial, string path)
-    {
-        string t = path + "//" + "FlareBySpriteEditor("+serial+").asset";
-        Debug.Log("Create Asset " + t);
-        ScriptableObject flareData = CreateInstance<MFFlareAssetFree>();
-        if (!Directory.Exists(t)) 
-        {
-            AssetDatabase.CreateAsset(flareData, t);
-        }
-        else
-        {
-            LoopCreateFlareAssetFree(serial + 1, path);
-            return;
-        }
-        AssetDatabase.Refresh();
-    }
+    // [MenuItem("Assets/Create/MFLensflare/Create MFFlareData split by SpriteEditor")]
+    // static void CreateFlareDataFree()
+    // {
+    //     string path = "";
+    //     UnityEngine.Object obj = Selection.activeObject;
+    //     path = obj == null ? "Assets" : AssetDatabase.GetAssetPath(obj.GetInstanceID());
+    //
+    //     ScriptableObject flareData = CreateInstance<MFFlareAssetFree>();
+    //     string t = path + "//" + "FlareBySpriteEditor.asset";
+    //     if (!Directory.Exists(t)) 
+    //     {
+    //         Debug.Log("Create Asset " + t);
+    //         AssetDatabase.CreateAsset(flareData, t);
+    //     }
+    //     else
+    //     {
+    //         LoopCreateFlareAssetFree(1, path);
+    //         return;
+    //     }
+    //     AssetDatabase.Refresh();
+    // }
+    //
+    // static void LoopCreateFlareAssetFree(int serial, string path)
+    // {
+    //     string t = path + "//" + "FlareBySpriteEditor("+serial+").asset";
+    //     Debug.Log("Create Asset " + t);
+    //     ScriptableObject flareData = CreateInstance<MFFlareAssetFree>();
+    //     if (!Directory.Exists(t)) 
+    //     {
+    //         AssetDatabase.CreateAsset(flareData, t);
+    //     }
+    //     else
+    //     {
+    //         LoopCreateFlareAssetFree(serial + 1, path);
+    //         return;
+    //     }
+    //     AssetDatabase.Refresh();
+    // }
 
     private void Awake()
     {
-        _targetAssetFree = target as MFFlareAssetFree;
+        _targetAssetSlicer = target as MFFlareAssetSlicer;
         _tablelist = new List<bool>();
     }
 
@@ -67,14 +67,14 @@ public class MFFlareFreeAssetEditor : Editor
         }
         EditorGUI.BeginChangeCheck();
         if(_tablelist!=null)_tablelist.Clear();
-        _targetAssetFree.fadeWithScale = EditorGUILayout.Toggle("Fade With Scale", _targetAssetFree.fadeWithScale);
-        _targetAssetFree.fadeWithAlpha = EditorGUILayout.Toggle("Fade With Alpha", _targetAssetFree.fadeWithAlpha);
-        _targetAssetFree.flareSprite = (Texture2D)EditorGUILayout.ObjectField("Texture", _targetAssetFree.flareSprite, typeof(Texture2D),true);
-        if (_targetAssetFree.flareSprite!=null)
+        _targetAssetSlicer.fadeWithScale = EditorGUILayout.Toggle("Fade With Scale", _targetAssetSlicer.fadeWithScale);
+        _targetAssetSlicer.fadeWithAlpha = EditorGUILayout.Toggle("Fade With Alpha", _targetAssetSlicer.fadeWithAlpha);
+        _targetAssetSlicer.flareSprite = (Texture2D)EditorGUILayout.ObjectField("Texture", _targetAssetSlicer.flareSprite, typeof(Texture2D),true);
+        if (_targetAssetSlicer.flareSprite!=null)
         {
-            if (!_targetAssetFree.flareSprite.Equals(_tmp))
+            if (!_targetAssetSlicer.flareSprite.Equals(_tmp))
             {
-                _tmp = _targetAssetFree.flareSprite;
+                _tmp = _targetAssetSlicer.flareSprite;
                 var guid = AssetDatabase.FindAssets(_tmp.name)[0];
                 var path = AssetDatabase.GUIDToAssetPath(guid);
                 var targetLoader = AssetDatabase.LoadAllAssetsAtPath(path);
@@ -92,7 +92,7 @@ public class MFFlareFreeAssetEditor : Editor
         }
 
         if (_tmpSprites == null) return;
-        Vector2 wh = new Vector2(_targetAssetFree.flareSprite.width, _targetAssetFree.flareSprite.height);
+        Vector2 wh = new Vector2(_targetAssetSlicer.flareSprite.width, _targetAssetSlicer.flareSprite.height);
         for (int i = 0; i < Mathf.Ceil((float)_tmpSprites.Length / 5); i++)
         {
             using (new EditorGUILayout.HorizontalScope(new GUIStyle(){fixedHeight = 60,stretchHeight = false,fixedWidth = 320, stretchWidth = false}))
@@ -107,7 +107,7 @@ public class MFFlareFreeAssetEditor : Editor
                         GUI.DrawTextureWithTexCoords(
                             new Rect(t.position + new Vector2(63 * (j - 5 * i)+1,1/*60 * (1- r.height/r.width)*/),
                                 new Vector2(58, 58)), 
-                            _targetAssetFree.flareSprite, 
+                            _targetAssetSlicer.flareSprite, 
                             r);
                     }
                 }
@@ -119,7 +119,7 @@ public class MFFlareFreeAssetEditor : Editor
         {
             if (_tablelist[i])
             {
-                _targetAssetFree.spriteBlocks.Add(new MFFlareSpriteData()
+                _targetAssetSlicer.spriteBlocks.Add(new MFFlareSpriteData()
                 {
                     useLightColor = 0,
                     useRotation = false,
@@ -133,10 +133,10 @@ public class MFFlareFreeAssetEditor : Editor
         }
 
         if (_tmpSprites == null || _tmpSprites.Length == 0) return;
-        for (int i = 0; i < _targetAssetFree.spriteBlocks.Count;)
+        for (int i = 0; i < _targetAssetSlicer.spriteBlocks.Count;)
         {
             EditorGUILayout.Space(5);
-            MFFlareSpriteData data = _targetAssetFree.spriteBlocks[i];
+            MFFlareSpriteData data = _targetAssetSlicer.spriteBlocks[i];
             Rect t = EditorGUILayout.BeginHorizontal(); 
             EditorGUILayout.LabelField(" ",new[] {GUILayout.Height(60), GUILayout.Width(60)});
             EditorGUILayout.BeginVertical();
@@ -145,7 +145,7 @@ public class MFFlareFreeAssetEditor : Editor
             GUI.DrawTextureWithTexCoords(
                 new Rect(t.position,
                     new Vector2(60,60)), 
-                _targetAssetFree.flareSprite, 
+                _targetAssetSlicer.flareSprite, 
                 data.block);
             data.index = EditorGUILayout.IntSlider("Index", data.index, 0, _tmpSprites.Length-1);
             data.useRotation = EditorGUILayout.Toggle("Rotation", data.useRotation);
@@ -158,19 +158,19 @@ public class MFFlareFreeAssetEditor : Editor
 
             if (GUILayout.Button("Remove"))
             {
-                _targetAssetFree.spriteBlocks.RemoveAt(i);
+                _targetAssetSlicer.spriteBlocks.RemoveAt(i);
             }
             else
             {
-                _targetAssetFree.spriteBlocks[i] = data;
+                _targetAssetSlicer.spriteBlocks[i] = data;
                 i++;
             }
         }
 
         if (EditorGUI.EndChangeCheck())
         {
-            EditorUtility.SetDirty(_targetAssetFree);
+            EditorUtility.SetDirty(_targetAssetSlicer);
         }
-        Undo.RecordObject(_targetAssetFree, "Change Flare Asset Data");
+        Undo.RecordObject(_targetAssetSlicer, "Change Flare Asset Data");
     }
 }
