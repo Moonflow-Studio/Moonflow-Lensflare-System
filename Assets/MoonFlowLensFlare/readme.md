@@ -26,11 +26,11 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ### 1. Setup
 
-​	Download this repository to your computer.​
+​	Download unitypackage to your computer.
 
-​	Open the project you can see these Files :
+​	Then you can see these Files :
 
-![Catalog](https://github.com/Reguluz/ImageBed/blob/master/Catalog.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-package.png)
 
 
 
@@ -42,19 +42,23 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ​	Create  ->  MFLensflare  ->  Create MFFlareData split by Cell.
 
-![RightClickToCreate](https://github.com/Reguluz/ImageBed/blob/master/RightClickToCreate.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-assetcreator.png)
 
 ​	Then you can see the default settings in _Inspector view_ when the asset was chosen.
 
-![DefaultAsset](https://github.com/Reguluz/ImageBed/blob/master/DefaultAsset.png)
+###### SpriteEditor version
+
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-slicer.png)![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-slicer-exp.png)
+
+###### Cell version
+
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-cell.png)![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-cell-exp.png)
 
 
 
 ### 3.Asset Settings
 
 ​	There are 3 global properties to set flare asset.
-
-​	![ChangeModel](https://github.com/Reguluz/ImageBed/blob/master/ChangeModel.png)
 
 #### 1) Texture
 
@@ -126,13 +130,13 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ### 5.Add flare launcher to light source
 
-![AddLauncher](https://github.com/Reguluz/ImageBed/blob/master/AddLauncher.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-addlauncher.png)
 
 Add _MFFlareLauncher_ component to your game object. There are some settings based on light source, so that it requires Light component.
 
 Now you can see launcher settings.
 
-![LauncherSettings](https://github.com/Reguluz/ImageBed/blob/master/LauncherSettings.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-launcher.png)
 
 #### 1) Directional Light
 
@@ -150,11 +154,11 @@ Now you can see launcher settings.
 
 ### 6. Add flare render to your  camera
 
-![AddRender](https://github.com/Reguluz/ImageBed/blob/master/AddRender.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-addmanager.png)
 
 Add _MFLensFlare_ component to your camera, now you can see flare render settings.
 
-![RenderSettings](https://github.com/Reguluz/ImageBed/blob/master/RenderSettings.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-manager1.png)
 
 #### 1) Debug Mode
 
@@ -178,7 +182,7 @@ Add _MFLensFlare_ component to your camera, now you can see flare render setting
 
 ​	It's easy to understand. Lens flare will not replaced color. And it also need to render some transparency pixel. 
 
-​	__4. _MainTex__
+​	__4. \_MainTex__
 
 ​	For the code in _MFLensflare.cs_, the chosen flare atlas is set by using _MaterialPropertyBlock_, and I have set the property name to "_MainTex", then the system could change atlases between  different light source. You can change this property name, but be sure they are same in MFLensflare.cs and your shader at same time.
 

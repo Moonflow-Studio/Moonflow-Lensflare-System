@@ -26,11 +26,11 @@
 
 ### 1. 设置
 
-​	下载仓库到你的电脑或者直接下载发布的UnityPackage导入到你需要的工程
+​	下载Package导入到你需要的工程
 
-​	打开工程你可以看到这些文件 :
+​	你可以看到这些文件 :
 
-![Catalog](https://github.com/Reguluz/ImageBed/blob/master/Catalog.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-package.png)
 
 
 
@@ -42,19 +42,23 @@
 
 ​	Create  ->  MFLensflare  ->  Create MFFlareData split by Cell.
 
-![RightClickToCreate](https://github.com/Reguluz/ImageBed/blob/master/RightClickToCreate.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-assetcreator.png)
 
 ​	然后选择新建的资产你可以看到默认参数.
 
-![DefaultAsset](https://github.com/Reguluz/ImageBed/blob/master/DefaultAsset.png)
+###### SpriteEditor版
+
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-slicer.png)![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-slicer-exp.png)
+
+###### Cell 版
+
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-cell.png)![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-cell-exp.png)
 
 
 
 ### 3.资产设置
 
 ​	有三个资产选项是公用的.
-
-​	![ChangeModel](https://github.com/Reguluz/ImageBed/blob/master/ChangeModel.png)
 
 ##### 1) Texture 贴图
 
@@ -123,13 +127,13 @@
 
 ### 5.添加发射器到需要显示镜头光的光源
 
-![AddLauncher](https://github.com/Reguluz/ImageBed/blob/master/AddLauncher.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-addlauncher.png)
 
 在有Light组件的对象上添加MFLensflareLauncher组件。该组件要求被挂载的游戏对象必须具有Light组件（需要从中获取值）
 
 现在你可以看到发射器的选项：
 
-![LauncherSettings](https://github.com/Reguluz/ImageBed/blob/master/LauncherSettings.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-launcher.png)
 
 #### 1) Directional Light
 
@@ -147,11 +151,11 @@
 
 ### 6. 添加镜头光晕渲染器到相机上
 
-![AddRender](https://github.com/Reguluz/ImageBed/blob/master/AddRender.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-addmanager.png)
 
 添加MFLensflare到挂载相机脚本的对象上，可以看到如下设置
 
-![RenderSettings](https://github.com/Reguluz/ImageBed/blob/master/RenderSettings.png)
+![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/mflensflare-manager1.png)
 
 #### 1) Debug Mode - Debug模式
 
