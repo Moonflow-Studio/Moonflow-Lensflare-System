@@ -202,7 +202,10 @@ Add _MFLensFlare_ component to your camera, now you can see flare render setting
 
    This solution allowed to use different atlas between different light sources, so each light source need one draw call to draw flare mesh. But they might be rendered just once (use just one draw call) theoretically when all the flares are from the same atlas.
 
-3. ​
+3. Only used for directional light
 
+   You can just add _MFLensflareSimple_ to your camera. It have been mixed the feature of both launcher and manager.
+
+4. ​
 
 
