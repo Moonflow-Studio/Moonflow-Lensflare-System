@@ -60,10 +60,6 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ​	Choose the flare atlas you need.
 
-​	![QQ截图20200919235430](https://raw.githubusercontent.com/Reguluz/ImageBed/master/20200919235457.png)
-
-​	__Caution: In the latest version, the flare texture must be saved in Resources folder, or it will not be loaded. Please try your own loading way.__
-
 #### 2) Fade With Scale
 
 ​	Lens flare will change the sprite scale while they are fading in or fading out
