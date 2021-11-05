@@ -177,7 +177,7 @@
 
  3. Transparent队列与Additive混合
 
-    光晕最终以半透明面片渲染在屏幕前，因此shader需要设置混合模式为"Blend One One"， 禁用ZWrite与ZTest，并设置RenderType为Transparent
+    光晕最终以半透明面片渲染在屏幕前，因此shader需要设置混合模式为"Blend One One"， ，并设置渲染队列大于3000以在半透明批次进行渲染
 
  4. _MainTex
 

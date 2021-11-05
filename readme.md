@@ -36,7 +36,11 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ### 2. Init Asset
 
-​	Move your cursor to _project view_, right-click and find the option: Create _URPFlareData_ to create a new flare data.
+​	Move your cursor to _project view_, right-click and find the option: 
+
+​	Create  ->  MFLensflare  ->  Create MFFlareData split by SpriteEditor.
+
+​	Create  ->  MFLensflare  ->  Create MFFlareData split by Cell.
 
 ![RightClickToCreate](https://github.com/Reguluz/ImageBed/blob/master/RightClickToCreate.png)
 
@@ -48,7 +52,7 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ### 3.Asset Settings
 
-​	There are 4 global properties to set flare asset.
+​	There are 3 global properties to set flare asset.
 
 ​	![ChangeModel](https://github.com/Reguluz/ImageBed/blob/master/ChangeModel.png)
 
@@ -58,7 +62,7 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ​	![QQ截图20200919235430](https://raw.githubusercontent.com/Reguluz/ImageBed/master/20200919235457.png)
 
-​	__Caution: In the latest version, the flare texture must be saved in Resources folder, or it will not be loaded. I'm still trying to find a more convenient way.__
+​	__Caution: In the latest version, the flare texture must be saved in Resources folder, or it will not be loaded. Please try your own loading way.__
 
 #### 2) Fade With Scale
 
@@ -68,13 +72,19 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ​	Lens flare will change the sprite Alpha while they are fading in or fading out
 
-#### 4) TextureLayout
+#### Special Settings for each asset version：
 
-​	There are several prepared model to slicing atlas, you are easily to find the difference between them. Choose the right one so that your atlas will not be separated incorrectly. __Other implementation methods are in research.__
+1. Slicer version
+
+   On the _Texture Importer_ settings of sprite atlas，The _Texture Type_ setting need to set as _Sprite(2D  and UI)_，and _Sprite Mode_ need to set as _Multiple_
+
+2. Cell version
+
+   There is one more property called Cell(Vector2)，x is the number of flares of single line on the atlas，y is the number of flares of single column on the atlas
 
 
 
-### 4.Add new piece of flare
+### 4.Add new flare
 
 ​	Lens flares based on a series of lined up sprites. So that we need to set every sprite pieces in flare assets. Click the separated atlas piece to create new flare piece. You can see following settings added in _Inspector view_.
 
@@ -90,7 +100,9 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 #### 3) LightColor
 
-​	If chosen, this piece will be influenced by the color and intensity of light source;
+​	It means the strength of single flare color which is totally mixed with light color or not.
+
+​	And if the flare launcher has checked _Use Light Intensity_, the final color will also mixed with light intensity.
 
 #### 4) Offset
 
@@ -120,7 +132,7 @@ These system support __multiple__ lens flares at the same time, and __each flare
 
 ![AddLauncher](https://github.com/Reguluz/ImageBed/blob/master/AddLauncher.png)
 
-Add _URPFlareLauncher_ component to your game object. There are some settings based on light source, so that it requires Light component.
+Add _MFFlareLauncher_ component to your game object. There are some settings based on light source, so that it requires Light component.
 
 Now you can see launcher settings.
 
@@ -144,23 +156,53 @@ Now you can see launcher settings.
 
 ![AddRender](https://github.com/Reguluz/ImageBed/blob/master/AddRender.png)
 
-Add _URPLensFlare_ component to your camera, now you can see flare render settings.
+Add _MFLensFlare_ component to your camera, now you can see flare render settings.
 
 ![RenderSettings](https://github.com/Reguluz/ImageBed/blob/master/RenderSettings.png)
 
 #### 1) Debug Mode
 
-​	There will render some line between real flare position and camera in scene view
+​	There will render some line between real flare position and camera in scene view.
 
 #### 2) Material
 
-​	Set a material to render your flare. Be sure that it is just used for flare, and in default settings, there must be a property called __BaseMap_ **(you can change the name in _URPLensFlare.cs_, line 34, change the name in brackets to match your shader, and it will show that this system can run correctly in buildin render pipeline if you set matched properties in your shader. )**.
+​	Set a material to render your flare.__Caution: Be sure that this shader could be rendered correctly on your current render pipeline.__
 
-​	Also you should known that lens flares are some transparency mesh, we need to set the render in transparent queue and in additive blend mode to show correctly. Be sure your shader in this material can make correct settings.
+​	The shader which used to render lens flare need to have following function, and I have already made an example called _MFLensflare.shader_  in the project for you:
 
-​	I recommend you to use _Universal Render Pipeline / Particles / Unlit_ shader.
+​	__1. Depth map reading and occlusion determination__
+
+​	This solution could do occlusion determination by  comparing the depth of light source with the depth of same pixel on depth map. So you need to input screen space light source position into the shader from C# script, using this screen position as uv to read your depth texture and find if light source has been obscured or not.
+
+​	__2. Vertex color mixing__
+
+​	This solusion deliver color settings of each flare asset to render by changing the vertex color of each mesh. It's quite similar as what Particle System do. So the shader need to mixing vertex color on the final step before output fragment result.
+
+​	__3. Queue > 3000 && Blend One One__
+
+​	It's easy to understand. Lens flare will not replaced color. And it also need to render some transparency pixel. 
+
+​	__4. _MainTex__
+
+​	For the code in _MFLensflare.cs_, the chosen flare atlas is set by using _MaterialPropertyBlock_, and I have set the property name to "_MainTex", then the system could change atlases between  different light source. You can change this property name, but be sure they are same in MFLensflare.cs and your shader at same time.
 
 #### 3) Fade out time
 
 ​	It shows how much time will cost to disappear the flares after light source disappeared from screen.
+
+
+
+### Some other optimized entries or questions
+
+1. Incorrect(delayed) displacement sync when using cinemachine for rendered camera
+
+   Please set execution order manually, be sure MFLensflare executed after cinemachine brain in the same tick. Look for more help:[Execution order problem with assets (rainyrizzle.github.io)](https://rainyrizzle.github.io/en/AdvancedManual/AD_ExecutionOrderProblem.html)
+
+2. Multiple light source with too much drawcall
+
+   This solution allowed to use different atlas between different light sources, so each light source need one draw call to draw flare mesh. But they might be rendered just once (use just one draw call) theoretically when all the flares are from the same atlas.
+
+3. ​
+
+
 
