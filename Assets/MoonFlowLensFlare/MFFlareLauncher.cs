@@ -11,7 +11,7 @@ public class MFFlareLauncher : MonoBehaviour
 {
     public bool directionalLight;
     public bool useLightIntensity;
-    public MFFlareAsset assetModel;
+    public MFFlareAsset asset;
     [HideInInspector]public Light lightSource;
     // [HideInInspector]public Texture2D tex;
     private void OnEnable()
@@ -26,10 +26,10 @@ public class MFFlareLauncher : MonoBehaviour
         lightSource = GetComponent<Light>();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         // Add self to awake function: RemoveLight in URPLensFlare.cs on camera in render;
-        //Camera.main.GetComponent<URPLensFlare>().RemoveLight(this);
+        Camera.main.GetComponent<MFLensFlare>().RemoveLight(this);
     }
     
 }

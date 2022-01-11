@@ -15,5 +15,29 @@ MonoBehaviour:
   flareSprite: {fileID: 2800000, guid: f27d4e82c44627a4aa1022c088208c0e, type: 3}
   fadeWithScale: 0
   fadeWithAlpha: 0
-  spriteBlocks: []
-  modelCell: {x: 6, y: 6}
+  spriteBlocks:
+  - useLightColor: 1
+    useRotation: 0
+    index: 2
+    block:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.5
+      height: 0.5
+    scale: 1
+    offset: 0.61
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - useLightColor: 1
+    useRotation: 0
+    index: 0
+    block:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 0.5
+      height: 0.5
+    scale: 0.94
+    offset: -0.9
+    color: {r: 1, g: 1, b: 1, a: 1}
+  modelCell: {x: 2, y: 2}

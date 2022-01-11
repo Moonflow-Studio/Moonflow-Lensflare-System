@@ -11,7 +11,7 @@ public class MFLensFlareSimple : MonoBehaviour
     public bool useLightIntensity;
     public Material material;
     public float fadeoutTime;
-    public FlareState flareData;
+    public FlareStatusData flareData;
     private Camera _camera;
     private Vector2 _halfScreen;
     private MaterialPropertyBlock _propertyBlock;
@@ -37,16 +37,16 @@ public class MFLensFlareSimple : MonoBehaviour
         _propertyBlock = new MaterialPropertyBlock();
         AddLight();
     }
-    private FlareState InitFlareData(MFFlareAsset mfFlareAssetModel)
+    private FlareStatusData InitFlareData(MFFlareAsset mfFlareAssetModel)
     {
-        FlareState state = new FlareState
+        FlareStatusData statusData = new FlareStatusData
         {
             sourceCoordinate = Vector3.zero,
             flareWorldPosCenter = new Vector3[mfFlareAssetModel.spriteBlocks.Count],
             fadeoutScale = 0,
             fadeState = 1
         };
-        return state;
+        return statusData;
     }
 
     public void AddLight()
@@ -60,51 +60,51 @@ public class MFLensFlareSimple : MonoBehaviour
 
         _flareMesh.Clear();
         
-        FlareState flareState = flareData;
-        GetSourceCoordinate(ref flareState);
-        bool isIn = CheckIn(ref flareState);
-        if (flareState.fadeoutScale > 0)
+        FlareStatusData flareStatusData = flareData;
+        GetSourceCoordinate(ref flareStatusData);
+        bool isIn = CheckIn(ref flareStatusData);
+        if (flareStatusData.fadeoutScale > 0)
         {
             if (!isIn)
             {
-                flareState.fadeState = 2;
+                flareStatusData.fadeState = 2;
             }
         }
-        if(flareState.fadeoutScale < 1)
+        if(flareStatusData.fadeoutScale < 1)
         {
             if (isIn)
             {
-                flareState.fadeState = 1;
+                flareStatusData.fadeState = 1;
             }
         }
-        if (!isIn && flareState.fadeoutScale <=0 )
+        if (!isIn && flareStatusData.fadeoutScale <=0 )
         {
-            if (flareState.fadeState != 3)
+            if (flareStatusData.fadeState != 3)
             {
-                flareState.fadeState = 3;
+                flareStatusData.fadeState = 3;
             }
         }
         else
         {
-            CalculateMeshData(ref flareState);
+            CalculateMeshData(ref flareStatusData);
         }
 
-        switch (flareState.fadeState)
+        switch (flareStatusData.fadeState)
         {
             case 1:
-                flareState.fadeoutScale += Time.deltaTime / fadeoutTime;
-                flareState.fadeoutScale = Mathf.Clamp(flareState.fadeoutScale, 0, 1);
-                flareData = flareState;
+                flareStatusData.fadeoutScale += Time.deltaTime / fadeoutTime;
+                flareStatusData.fadeoutScale = Mathf.Clamp(flareStatusData.fadeoutScale, 0, 1);
+                flareData = flareStatusData;
                 break;
             case 2:
-                flareState.fadeoutScale -= Time.deltaTime / fadeoutTime;
-                flareState.fadeoutScale = Mathf.Clamp(flareState.fadeoutScale, 0, 1);
-                flareData = flareState;
+                flareStatusData.fadeoutScale -= Time.deltaTime / fadeoutTime;
+                flareStatusData.fadeoutScale = Mathf.Clamp(flareStatusData.fadeoutScale, 0, 1);
+                flareData = flareStatusData;
                 break;
             case 3:
                 // RemoveLight(lightSource[i]);
                 break;
-            default: flareData = flareState;
+            default: flareData = flareStatusData;
                 break;
         }
         
@@ -117,17 +117,17 @@ public class MFLensFlareSimple : MonoBehaviour
         }
     }
 
-    bool CheckIn(ref FlareState state)
+    bool CheckIn(ref FlareStatusData statusData)
     {
-        if (state.sourceCoordinate.x <  _camera.pixelRect.xMin || state.sourceCoordinate.y < _camera.pixelRect.yMin 
-            || state.sourceCoordinate.x > _camera.pixelRect.xMax || state.sourceCoordinate.y > _camera.pixelRect.yMax
+        if (statusData.sourceCoordinate.x <  _camera.pixelRect.xMin || statusData.sourceCoordinate.y < _camera.pixelRect.yMin 
+            || statusData.sourceCoordinate.x > _camera.pixelRect.xMax || statusData.sourceCoordinate.y > _camera.pixelRect.yMax
             || Vector3.Dot(directionalLight.transform.position - _camera.transform.position, _camera.transform.forward) < 0.25f)
         {
             return false;
         }
         else
         {
-            Vector3 screenUV = state.sourceCoordinate;
+            Vector3 screenUV = statusData.sourceCoordinate;
             screenUV.x = screenUV.x / _camera.pixelWidth;
             screenUV.y = screenUV.y / _camera.pixelHeight;
             _propertyBlock.SetVector(STATIC_FLARESCREENPOS, screenUV);
@@ -145,24 +145,24 @@ public class MFLensFlareSimple : MonoBehaviour
         }
     }
 
-    void GetSourceCoordinate(ref FlareState state)
+    void GetSourceCoordinate(ref FlareStatusData statusData)
     {
         Vector3 sourceScreenPos = _camera.WorldToScreenPoint(directionalLight.transform.position - directionalLight.transform.forward * 10000);
-        state.sourceCoordinate = new Vector3(sourceScreenPos.x , sourceScreenPos.y , DISTANCE);
+        statusData.sourceCoordinate = new Vector3(sourceScreenPos.x , sourceScreenPos.y , DISTANCE);
     }
 
-    void CalculateMeshData(ref FlareState state)
+    void CalculateMeshData(ref FlareStatusData statusData)
     {
         Vector3[] oneFlareLine = new Vector3[lightSourceAsset.spriteBlocks.Count];
         float[] useLightColor = new float[lightSourceAsset.spriteBlocks.Count];
         for (int i = 0; i < lightSourceAsset.spriteBlocks.Count; i++)
         {
-            Vector2 realSourceCoordinateOffset = new Vector2(state.sourceCoordinate.x - _halfScreen.x, state.sourceCoordinate.y - _halfScreen.y);
+            Vector2 realSourceCoordinateOffset = new Vector2(statusData.sourceCoordinate.x - _halfScreen.x, statusData.sourceCoordinate.y - _halfScreen.y);
             Vector2 realOffset = realSourceCoordinateOffset * lightSourceAsset.spriteBlocks[i].offset;
-            oneFlareLine[i] = new Vector3(_halfScreen.x + realOffset.x, _halfScreen.y + realOffset.y, state.sourceCoordinate.z);
+            oneFlareLine[i] = new Vector3(_halfScreen.x + realOffset.x, _halfScreen.y + realOffset.y, statusData.sourceCoordinate.z);
             useLightColor[i] = lightSourceAsset.spriteBlocks[i].useLightColor;
         }
-        state.flareWorldPosCenter = oneFlareLine;
+        statusData.flareWorldPosCenter = oneFlareLine;
     }
 
     void CreateMesh()
