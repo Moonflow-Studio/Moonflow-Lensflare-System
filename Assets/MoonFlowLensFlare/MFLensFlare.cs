@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Unity.Collections;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -29,7 +30,9 @@ public class MFLensFlare : MonoBehaviour
     [Space(10)]
     public Material material;
     public float fadeoutTime;
+    public ComputeShader cs_PrepareLightOcclusion;
     public Dictionary<MFFlareLauncher, FlareStatusData> FlareDict => _flareDict;
+    
     private Dictionary<MFFlareLauncher, FlareStatusData> _flareDict;
     private Camera _camera;
     private Vector2 _halfScreen;
@@ -38,14 +41,24 @@ public class MFLensFlare : MonoBehaviour
     private Queue<Mesh> _meshPool;
     private static readonly int STATIC_FLARESCREENPOS = Shader.PropertyToID("_FlareScreenPos");
     private static readonly int STATIC_BaseMap = Shader.PropertyToID("_MainTex");
+    
     private static readonly float DISTANCE = 1f;
-
+    private int _cs_kernel;
+    private Vector4 _cs_lightUVInt;
+    private ComputeBuffer _cb_lightOcclusionCheckBuffer;
+    private int[] _isLightOccluded = {1};
+    private static readonly int CS_LIGHT_SRC_UV = Shader.PropertyToID("_LightSrcUV");
+    private static readonly int CS_IS_LIGHT_OCCLUDED = Shader.PropertyToID("_IsLightOccluded");
+    private static readonly int CS_DEPTHTEX_NAME = Shader.PropertyToID("_DepthTex");
+    private static readonly int PIPELINE_DEPTH_TEX = Shader.PropertyToID("_CameraDepthTexture");
     private void Awake()
     {
         _camera = GetComponent<Camera>();
         _propertyBlock = new MaterialPropertyBlock();
         _flareDict = new Dictionary<MFFlareLauncher, FlareStatusData>();
         _meshPool = new Queue<Mesh>();
+        _cs_kernel = cs_PrepareLightOcclusion.FindKernel("PrepareLightOcclusion");
+        _cb_lightOcclusionCheckBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Structured);
     }
     private FlareStatusData InitFlareData(MFFlareLauncher mfFlareLauncher)
     {
@@ -206,8 +219,37 @@ public class MFLensFlare : MonoBehaviour
             screenUV.y = screenUV.y / _camera.pixelHeight;
             screenUV.w = lightSource.directionalLight ? 1 : 0;
             statusData.sourceScreenPos = screenUV;
-            return true;
+            
+            return /*true*/PrepareLightOcclusion(statusData.sourceCoordinate);
         }
+    }
+
+    private bool PrepareLightOcclusion(Vector4 screenPos)
+    {
+        _cs_lightUVInt = new Vector4((int)screenPos.x, (int)screenPos.y, 0, 0);
+        // Debug.Log(_cs_lightUVInt);
+        cs_PrepareLightOcclusion.SetVector(CS_LIGHT_SRC_UV, _cs_lightUVInt);
+        var depthTex = Shader.GetGlobalTexture(PIPELINE_DEPTH_TEX);
+        //TODO: Most of time the "depthTex" is null, so that compute shader can't get it either
+        if (depthTex != null)
+        {
+            Texture2D t = depthTex as Texture2D;
+            if (t != null)
+            {
+                var color = t.GetPixel((int)_cs_lightUVInt.x, (int)_cs_lightUVInt.y);
+                Debug.Log(color);
+                return color.r > 0;
+            }
+        }
+        return true;
+        // cs_PrepareLightOcclusion.SetTexture(_cs_kernel, CS_DEPTHTEX_NAME, depthTex);
+        // _cb_lightOcclusionCheckBuffer.SetData(_isLightOccluded);
+        // cs_PrepareLightOcclusion.SetBuffer(_cs_kernel, CS_IS_LIGHT_OCCLUDED, _cb_lightOcclusionCheckBuffer);
+        //
+        // cs_PrepareLightOcclusion.Dispatch(_cs_kernel, 1, 1, 1);
+        // _cb_lightOcclusionCheckBuffer.GetData(_isLightOccluded);
+        // Debug.Log(_isLightOccluded[0]);
+        // return _isLightOccluded[0] != 1;
     }
 
     void CalculateMeshData(MFFlareLauncher lightSource, ref FlareStatusData statusData)
@@ -323,7 +365,10 @@ public class MFLensflareEditor : Editor
     }
     public override void OnInspectorGUI()
     {
-        EditorGUILayout.LabelField("Light Count: ", _target.FlareDict.Count.ToString());
+        if (_target.FlareDict!=null && _target.FlareDict.Count != 0)
+        {
+            EditorGUILayout.LabelField("Light Count: ", _target.FlareDict.Count.ToString());
+        }
         base.OnInspectorGUI();
     }
 }
