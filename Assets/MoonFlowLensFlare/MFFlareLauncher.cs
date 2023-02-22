@@ -14,11 +14,13 @@ public class MFFlareLauncher : MonoBehaviour
     public MFFlareAsset asset;
     [HideInInspector]public Light lightSource;
     // [HideInInspector]public Texture2D tex;
+    private Camera _mainCam;
     private void OnEnable()
     {
         lightSource = GetComponent<Light>();
         // Add self to awake function: AddLight in URPLensFlare.cs on camera in render;
-        Camera.main.GetComponent<MFLensFlare>().AddLight(this);
+        _mainCam = Camera.main;
+        _mainCam.GetComponent<MFLensFlare>().AddLight(this);
     }
     
     private void Reset()
@@ -29,7 +31,10 @@ public class MFFlareLauncher : MonoBehaviour
     private void OnDisable()
     {
         // Add self to awake function: RemoveLight in URPLensFlare.cs on camera in render;
-        Camera.main.GetComponent<MFLensFlare>().RemoveLight(this);
+        if (_mainCam != null)
+        {
+            _mainCam.GetComponent<MFLensFlare>().RemoveLight(this);
+        }
     }
     
 }
