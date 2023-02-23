@@ -1,19 +1,22 @@
-
 #pragma kernel PrepareLightOcclusion
 
-
+struct LightUV
+{
+    int x;
+    int y;
+};
 RWStructuredBuffer<float> _LightSourceDepth;
-uint _LightSrcUVX;
-uint _LightSrcUVY;
+RWStructuredBuffer<LightUV> _LightUV;
+// int _LightSrcUVX[8];
+// int _LightSrcUVY[8];
 //Replaced by the depth texture from your project
 Texture2D<float4> _CameraDepthTexture;
 
 [numthreads(1,1,1)]
 void PrepareLightOcclusion (uint3 id : SV_DispatchThreadID)
 {
-#if defined(SHADER_API_D3D11) || defined(SHADER_API_D3D12) || defined(SHADER_API_D3D11_9X) || defined(SHADER_API_XBOXONE) || defined(SHADER_API_PSSL)
-    _LightSourceDepth[0] = _CameraDepthTexture[uint2(_LightSrcUVX, _LightSrcUVY)].x /*> 0 ? 1 : 0*/;
-#else
-    _LightSourceDepth[0] = _CameraDepthTexture[_LightSrcUV.xy].x * 1000 /*< 1 ? 1 : 0*/;
-#endif
+    for (int i = 0; i < 8; i++)
+    {
+        _LightSourceDepth[i] = _CameraDepthTexture[uint2(_LightUV[i].x, _LightUV[i].y)].x;
+    }
 }

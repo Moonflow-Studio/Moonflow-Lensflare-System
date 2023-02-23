@@ -21,7 +21,8 @@ public class FlareStatusData
     public Vector3 sourceCoordinate;
     public Vector3[] flareWorldPosCenter;
     public float flareScale;
-    public bool isIn;
+    public bool isInScreen;
+    public bool isVisible;
     public FadeState fadeState;
     public Vector4 sourceScreenPos;
     public Mesh flareMesh;
@@ -29,6 +30,7 @@ public class FlareStatusData
     public Vector2[] uv;
     public Color[] vertColor;
     public int[] triangle;
+    public int srcIndex;
 }
 
 
@@ -40,8 +42,8 @@ public class MFLensFlare : MonoBehaviour
     public float fadeoutTime;
     public ComputeShader cs_PrepareLightOcclusion;
     public Dictionary<MFFlareLauncher, FlareStatusData> FlareDict => _flareDict;
-    
     private Dictionary<MFFlareLauncher, FlareStatusData> _flareDict;
+    private Dictionary<MFFlareLauncher, FlareStatusData> _activeFlareDict;
     private Camera _camera;
     private Vector2 _halfScreen;
     private MaterialPropertyBlock _propertyBlock;
@@ -52,11 +54,19 @@ public class MFLensFlare : MonoBehaviour
     
     private static readonly float DISTANCE = 1f;
     private int _csKernel;
-    private Vector4 _csLightUVInt;
+    // private Vector4 _csLightUVInt;
     private ComputeBuffer _cbLightOcclusionCheckBuffer;
-    private float[] _lightSourceDepth = {1.0f};
-    private static readonly int CS_LIGHT_SRC_UVX = Shader.PropertyToID("_LightSrcUVX");
-    private static readonly int CS_LIGHT_SRC_UVY = Shader.PropertyToID("_LightSrcUVY");
+    private ComputeBuffer _cbLightUVBuffer;
+    public struct LightUV
+    {
+        public int x;
+        public int y;
+    }
+    private LightUV[] _lightSourceUV;
+
+    private float[] _lightSourceDepth = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    private Queue<int> _emptyIndex = new Queue<int>();
+    private static readonly int CS_LIGHT_UV = Shader.PropertyToID("_LightUV");
     private static readonly int CS_IS_LIGHT_OCCLUDED = Shader.PropertyToID("_LightSourceDepth");
     private static readonly int CS_DEPTHTEX_NAME = Shader.PropertyToID("_DepthTex");
     //Use your own depth texture used in your project
@@ -66,16 +76,28 @@ public class MFLensFlare : MonoBehaviour
         _camera = GetComponent<Camera>();
         _propertyBlock = new MaterialPropertyBlock();
         _flareDict = new Dictionary<MFFlareLauncher, FlareStatusData>();
+        _activeFlareDict = new Dictionary<MFFlareLauncher, FlareStatusData>();
         _meshPool = new Queue<Mesh>();
         _csKernel = cs_PrepareLightOcclusion.FindKernel("PrepareLightOcclusion");
-        _cbLightOcclusionCheckBuffer = new ComputeBuffer(1, sizeof(float));
+        _cbLightOcclusionCheckBuffer = new ComputeBuffer(8, sizeof(float), ComputeBufferType.Structured);
+        unsafe
+        {
+            _cbLightUVBuffer = new ComputeBuffer(8, sizeof(LightUV), ComputeBufferType.Structured);
+        }
         RenderPipelineManager.endCameraRendering += AddRenderPass;
+        _lightSourceUV = new LightUV[8];
+        for (int i = 0; i < 8; i++)
+        {
+            _emptyIndex.Enqueue(i);
+            _lightSourceUV[i] = new LightUV(){x = 0, y = 0};
+        }
     }
 
     private void OnDisable()
     {
         RenderPipelineManager.endCameraRendering -= AddRenderPass;
         _cbLightOcclusionCheckBuffer?.Release();
+        _cbLightUVBuffer?.Release();
     }
 
     private FlareStatusData InitFlareData(MFFlareLauncher mfFlareLauncher)
@@ -85,7 +107,6 @@ public class MFLensFlare : MonoBehaviour
         {
             sourceCoordinate = Vector3.zero,
             flareWorldPosCenter = new Vector3[mfFlareLauncher.asset.spriteBlocks.Count],
-            // edgeScale = 1,
             flareScale = 0,
             fadeState = FadeState.Render,
             sourceScreenPos = Vector4.zero,
@@ -93,7 +114,8 @@ public class MFLensFlare : MonoBehaviour
             vertices = new Vector3[flareCount * 4],
             triangle = new int[flareCount * 6],
             uv = new Vector2[flareCount * 4],
-            vertColor = new Color[flareCount * 4]
+            vertColor = new Color[flareCount * 4],
+            srcIndex = -1
         };
         for (int i = 0; i < mfFlareLauncher.asset.spriteBlocks.Count; i++)
         {
@@ -115,16 +137,21 @@ public class MFLensFlare : MonoBehaviour
 
     public void AddLight(MFFlareLauncher mfFlareLauncher)
     {
-        if (DebugMode)
-        {
-            Debug.Log("Add Light " + mfFlareLauncher.gameObject.name + " to FlareList");
-        }
+        if (DebugMode)Debug.Log("Add Light " + mfFlareLauncher.gameObject.name + " to FlareList");
         var flareData = InitFlareData(mfFlareLauncher);
         _flareDict.Add(mfFlareLauncher, flareData);
+        ActiveLight(mfFlareLauncher,ref flareData);
+    }
+    public void ActiveLight(MFFlareLauncher mfFlareLauncher,ref FlareStatusData flareData)
+    {
+        if (DebugMode)Debug.Log("Active Light " + mfFlareLauncher.gameObject.name + " to ActiveList");
+        flareData.srcIndex = _emptyIndex.Dequeue();
+        _activeFlareDict.Add(mfFlareLauncher, flareData);
     }
 
     public void RemoveLight(MFFlareLauncher mfFlareLauncher)
     {
+        InactiveLight(mfFlareLauncher);
         if(DebugMode)Debug.Log("Remove Light " + mfFlareLauncher.gameObject.name + " from FlareList");
         if (_flareDict.TryGetValue(mfFlareLauncher, out FlareStatusData flareState))
         {
@@ -133,6 +160,18 @@ public class MFLensFlare : MonoBehaviour
             _flareDict.Remove(mfFlareLauncher);
         }
     }
+
+    private void InactiveLight(MFFlareLauncher mfFlareLauncher)
+    {
+        if (_activeFlareDict.TryGetValue(mfFlareLauncher, out FlareStatusData flareState))
+        {
+            _emptyIndex.Enqueue(flareState.srcIndex);
+            flareState.srcIndex = -1;
+            _activeFlareDict.Remove(mfFlareLauncher);
+            if(DebugMode)Debug.Log("Inactive Light " + mfFlareLauncher.gameObject.name + " from FlareList");
+        }
+    }
+
     private void Update()
     {
         _halfScreen = new Vector2(_camera.scaledPixelWidth / 2 + _camera.pixelRect.xMin, _camera.scaledPixelHeight / 2 + _camera.pixelRect.yMin);
@@ -148,7 +187,7 @@ public class MFLensFlare : MonoBehaviour
             {
                 if(flareStatusData.flareScale >= 1)
                 {
-                    if (!flareStatusData.isIn)
+                    if (!flareStatusData.isVisible)
                     {
                         flareStatusData.fadeState = FadeState.FadeOut;
                     }
@@ -159,7 +198,7 @@ public class MFLensFlare : MonoBehaviour
                 }
                 else
                 {
-                    if (!flareStatusData.isIn)
+                    if (!flareStatusData.isVisible)
                     {
                         flareStatusData.fadeState = FadeState.FadeOut;
                     }
@@ -171,12 +210,16 @@ public class MFLensFlare : MonoBehaviour
             }
             else
             {
-                if (!flareStatusData.isIn)
+                if (!flareStatusData.isInScreen)
                 {
                     flareStatusData.fadeState = FadeState.Unrendered;
                 }
                 else
                 {
+                    if (!_activeFlareDict.TryGetValue(lightSource, out FlareStatusData value))
+                    {
+                        ActiveLight(lightSource, ref flareStatusData);
+                    }
                     flareStatusData.fadeState = FadeState.FadeIn;
                 }
             }
@@ -198,7 +241,7 @@ public class MFLensFlare : MonoBehaviour
                     break;
                 case FadeState.Unrendered:
                     flareStatusData.flareScale = 0;
-                    // RemoveLight(lightSource[i]);
+                    InactiveLight(lightSource);
                     break;
                 case FadeState.Render:
                     flareStatusData.flareScale = 1;
@@ -232,10 +275,17 @@ public class MFLensFlare : MonoBehaviour
             || Vector3.Dot(lightSource.directionalLight ? Vector3.Normalize(_camera.transform.position - lightSource.transform.forward * 10000f) : Vector3.Normalize(lightSource.transform.position - _camera.transform.position), _camera.transform.forward) < 0.25f)
         {
             statusData.sourceScreenPos = Vector4.zero;
-            statusData.isIn = false;
+            statusData.isVisible = false;
+            statusData.isInScreen = false;
         }
         else
         {
+            statusData.isInScreen = true;
+            if (statusData.srcIndex == -1)
+            {
+                statusData.isVisible = false;
+                return;
+            }
             // var camPos = _camera.transform.position;
             // var targetPos = lightSource.directionalLight
             //     ? -lightSource.transform.forward * 10000f
@@ -254,31 +304,67 @@ public class MFLensFlare : MonoBehaviour
             screenUV.w = lightSource.directionalLight ? 1 : 0;
             statusData.sourceScreenPos = screenUV;
 
-            _csLightUVInt = new Vector4((int)statusData.sourceCoordinate.x, (int)statusData.sourceCoordinate.y, 0, 0);
-            if (_lightSourceDepth[0] == 0)
+            // _csLightUVInt = new Vector4((int)statusData.sourceCoordinate.x, (int)statusData.sourceCoordinate.y, 0, 0);
+        #if OPENGL
+            float scaledDepth = 1 - _lightSourceDepth[statusData.srcIndex];
+        #else
+            float scaledDepth = _lightSourceDepth[statusData.srcIndex];
+        #endif
+            if (lightSource.directionalLight)
             {
-                statusData.isIn = true;
+                if(scaledDepth >= 1)
+                {
+                    statusData.isVisible = true;
+                }
+                else
+                {
+                    statusData.sourceScreenPos = Vector4.zero;
+                    statusData.isVisible = false;
+                }
             }
             else
             {
-                statusData.sourceScreenPos = Vector4.zero;
-                statusData.isIn = false;
+                scaledDepth = (_camera.farClipPlane - _camera.nearClipPlane) * scaledDepth + _camera.nearClipPlane;
+                if(scaledDepth <= Vector3.Magnitude(lightSource.transform.position - _camera.transform.position))
+                {
+                    statusData.isVisible = true;
+                }
+                else
+                {
+                    statusData.sourceScreenPos = Vector4.zero;
+                    statusData.isVisible = false;
+                }
             }
+            
         }
     }
 
     private void PrepareLightOcclusion()
     {
-        cs_PrepareLightOcclusion.SetInt(CS_LIGHT_SRC_UVX, (int)_csLightUVInt.x);
-        cs_PrepareLightOcclusion.SetInt(CS_LIGHT_SRC_UVY,(int)_csLightUVInt.y);
+        DeliverUV();
+
         var depthTex = Shader.GetGlobalTexture(PIPELINE_DEPTH_TEX);
 
         cs_PrepareLightOcclusion.SetTexture(_csKernel, CS_DEPTHTEX_NAME, depthTex);
         _cbLightOcclusionCheckBuffer.SetData(_lightSourceDepth);
+        _cbLightUVBuffer.SetData(_lightSourceUV);
         cs_PrepareLightOcclusion.SetBuffer(_csKernel, CS_IS_LIGHT_OCCLUDED, _cbLightOcclusionCheckBuffer);
+        cs_PrepareLightOcclusion.SetBuffer(_csKernel, CS_LIGHT_UV, _cbLightUVBuffer);
         cs_PrepareLightOcclusion.Dispatch(_csKernel, 1, 1, 1);
         _cbLightOcclusionCheckBuffer.GetData(_lightSourceDepth);
-        
+    }
+
+    private void DeliverUV()
+    {
+        foreach (var pair in _flareDict)
+        {
+            var src = pair.Value;
+            if (src.srcIndex != -1)
+            {
+                _lightSourceUV[src.srcIndex].x = (int)src.sourceCoordinate.x;
+                _lightSourceUV[src.srcIndex].y = (int)src.sourceCoordinate.y;
+            }
+        }
     }
 
     private void AddRenderPass(ScriptableRenderContext context, Camera camera)
@@ -287,7 +373,7 @@ public class MFLensFlare : MonoBehaviour
         // {
         if (camera.gameObject.CompareTag("MainCamera"))
         {
-                PrepareLightOcclusion();
+            PrepareLightOcclusion();
         }
         // }
     }
