@@ -69,12 +69,12 @@ public class MFLensFlare : MonoBehaviour
         _meshPool = new Queue<Mesh>();
         _csKernel = cs_PrepareLightOcclusion.FindKernel("PrepareLightOcclusion");
         _cbLightOcclusionCheckBuffer = new ComputeBuffer(1, sizeof(float));
-        RenderPipelineManager.endFrameRendering += AddRenderPass;
+        RenderPipelineManager.endCameraRendering += AddRenderPass;
     }
 
     private void OnDisable()
     {
-        RenderPipelineManager.endFrameRendering -= AddRenderPass;
+        RenderPipelineManager.endCameraRendering -= AddRenderPass;
         _cbLightOcclusionCheckBuffer?.Release();
     }
 
@@ -281,15 +281,15 @@ public class MFLensFlare : MonoBehaviour
         
     }
 
-    private void AddRenderPass(ScriptableRenderContext context, Camera[] camera)
+    private void AddRenderPass(ScriptableRenderContext context, Camera camera)
     {
-        foreach (var cam in camera)
+        // foreach (var cam in camera)
+        // {
+        if (camera.gameObject.CompareTag("MainCamera"))
         {
-            if (cam.cameraType == CameraType.Game && cam.gameObject.name == "Main Camera")
-            {
                 PrepareLightOcclusion();
-            }
         }
+        // }
     }
 
     void CalculateMeshData(MFFlareLauncher lightSource, ref FlareStatusData statusData)
