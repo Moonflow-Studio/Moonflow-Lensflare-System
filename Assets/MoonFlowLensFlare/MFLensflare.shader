@@ -46,8 +46,9 @@ Shader"Moonflow/Lensflare"
             SamplerState sampler_MainTex;
             float4 _MainTex_ST;
 
-            Texture2D _CameraDepthTexture;
-            SamplerState sampler_CameraDepthTexture;
+            // Moved to use ComputeShader
+            // Texture2D _CameraDepthTexture;
+            // SamplerState sampler_CameraDepthTexture;
 
             half4 _FlareScreenPos;
 
@@ -62,10 +63,10 @@ Shader"Moonflow/Lensflare"
 
             half4 frag (v2f i) : SV_Target
             {
-                half depthMask = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, _FlareScreenPos.xy).r;
-                half depthTex = LinearEyeDepth(depthMask, _ZBufferParams);
-                half needRender = lerp(saturate(depthTex - _FlareScreenPos.z), 1 - ceil(depthMask), _FlareScreenPos.w);
-                half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv.xy) * needRender * i.color;
+                // half depthMask = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, _FlareScreenPos.xy).r;
+                // half depthTex = LinearEyeDepth(depthMask, _ZBufferParams);
+                // half needRender = lerp(saturate(depthTex - _FlareScreenPos.z), 1 - ceil(depthMask), _FlareScreenPos.w);
+                half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv.xy)/* * needRender*/ * i.color;
                 return col;
             }
             ENDHLSL
