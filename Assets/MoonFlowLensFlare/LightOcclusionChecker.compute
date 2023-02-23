@@ -1,7 +1,5 @@
 #pragma kernel PrepareLightOcclusion
 
-// #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UnityInput.hlsl"
-// #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 struct LightUV
 {
     int x;

@@ -41,7 +41,7 @@ public class MFLensFlare : MonoBehaviour
     private static readonly int PIPELINE_DEPTH_TEX = Shader.PropertyToID("_CameraDepthTexture");
     //Use the correct ZBufferParams used in your project
     private static readonly int Z_BUFFER_PARAMS = Shader.PropertyToID("_ZBufferParams");
-    
+    private static readonly string CAMERA_COMPARE_TAG = "MainCamera";
     //******************************************
     
     public bool DebugMode;
@@ -49,10 +49,7 @@ public class MFLensFlare : MonoBehaviour
     public Material material;
     public float fadeoutTime;
     public ComputeShader cs_PrepareLightOcclusion;
-    public Dictionary<MFFlareLauncher, FlareStatusData> FlareDict => _flareDict;
-    public Dictionary<MFFlareLauncher, FlareStatusData> ActiveDict => _activeFlareDict;
-    
-    
+
     private Dictionary<MFFlareLauncher, FlareStatusData> _flareDict;
     private Dictionary<MFFlareLauncher, FlareStatusData> _activeFlareDict;
     private Camera _camera;
@@ -67,12 +64,12 @@ public class MFLensFlare : MonoBehaviour
     private int _csKernel;
     private ComputeBuffer _cbLightOcclusionCheckBuffer;
     private ComputeBuffer _cbLightUVBuffer;
-    public struct LightUV
+    public struct ScreenSpaceUV
     {
         public int x;
         public int y;
     }
-    private LightUV[] _lightSourceUV;
+    private ScreenSpaceUV[] _screenSpaceLightSrcUV;
     private float[] _lightSourceDepth = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
     private Queue<int> _emptyIndex = new Queue<int>();
     private static readonly int CS_LIGHT_UV = Shader.PropertyToID("_LightUV");
@@ -81,6 +78,8 @@ public class MFLensFlare : MonoBehaviour
     private static readonly int Z_BUFFER_DELIVERED = Shader.PropertyToID("_ZBufferDelivered");
 
 #if UNITY_EDITOR
+    public Dictionary<MFFlareLauncher, FlareStatusData> FlareDict => _flareDict;
+    public Dictionary<MFFlareLauncher, FlareStatusData> ActiveDict => _activeFlareDict;
     public float[] Editor_LightSrcDepth => _lightSourceDepth;
 #endif
     private void Awake()
@@ -94,14 +93,14 @@ public class MFLensFlare : MonoBehaviour
         _cbLightOcclusionCheckBuffer = new ComputeBuffer(8, sizeof(float), ComputeBufferType.Structured);
         unsafe
         {
-            _cbLightUVBuffer = new ComputeBuffer(8, sizeof(LightUV), ComputeBufferType.Structured);
+            _cbLightUVBuffer = new ComputeBuffer(8, sizeof(ScreenSpaceUV), ComputeBufferType.Structured);
         }
         RenderPipelineManager.endCameraRendering += AddRenderPass;
-        _lightSourceUV = new LightUV[8];
+        _screenSpaceLightSrcUV = new ScreenSpaceUV[8];
         for (int i = 0; i < 8; i++)
         {
             _emptyIndex.Enqueue(i);
-            _lightSourceUV[i] = new LightUV(){x = 0, y = 0};
+            _screenSpaceLightSrcUV[i] = new ScreenSpaceUV(){x = 0, y = 0};
         }
     }
 
@@ -311,8 +310,8 @@ public class MFLensFlare : MonoBehaviour
             screenUV.y = screenUV.y / _camera.pixelHeight;
             screenUV.w = lightSource.directionalLight ? 1 : 0;
             statusData.sourceScreenPos = screenUV;
-            
-            float worldSpaceDepth = _lightSourceDepth[statusData.srcIndex] /*+ _camera.nearClipPlane*/;
+
+            float worldSpaceDepth = _lightSourceDepth[statusData.srcIndex];
 
             if (lightSource.directionalLight)
             {
@@ -350,7 +349,7 @@ public class MFLensFlare : MonoBehaviour
         var depthTex = Shader.GetGlobalTexture(PIPELINE_DEPTH_TEX);
         cs_PrepareLightOcclusion.SetTexture(_csKernel, CS_DEPTHTEX_NAME, depthTex);
         _cbLightOcclusionCheckBuffer.SetData(_lightSourceDepth);
-        _cbLightUVBuffer.SetData(_lightSourceUV);
+        _cbLightUVBuffer.SetData(_screenSpaceLightSrcUV);
         cs_PrepareLightOcclusion.SetBuffer(_csKernel, CS_IS_LIGHT_OCCLUDED, _cbLightOcclusionCheckBuffer);
         cs_PrepareLightOcclusion.SetBuffer(_csKernel, CS_LIGHT_UV, _cbLightUVBuffer);
         var zBufferParam = Shader.GetGlobalVector(Z_BUFFER_PARAMS);
@@ -366,15 +365,15 @@ public class MFLensFlare : MonoBehaviour
             var src = pair.Value;
             if (src.srcIndex != -1)
             {
-                _lightSourceUV[src.srcIndex].x = (int)src.sourceCoordinate.x;
-                _lightSourceUV[src.srcIndex].y = (int)src.sourceCoordinate.y;
+                _screenSpaceLightSrcUV[src.srcIndex].x = (int)src.sourceCoordinate.x;
+                _screenSpaceLightSrcUV[src.srcIndex].y = (int)src.sourceCoordinate.y;
             }
         }
     }
 
     private void AddRenderPass(ScriptableRenderContext context, Camera camera)
     {
-        if (camera.gameObject.CompareTag("MainCamera"))
+        if (camera.gameObject.CompareTag(CAMERA_COMPARE_TAG))
         {
             PrepareLightOcclusion();
         }
@@ -396,7 +395,6 @@ public class MFLensFlare : MonoBehaviour
 
     void CreateMesh(MFFlareLauncher lightSource, ref FlareStatusData statusData)
     {
-        var flareCount = lightSource.asset.spriteBlocks.Count;
         if (statusData.flareScale > 0)
         {
             Texture2D tex = lightSource.asset.flareSprite;
@@ -507,8 +505,7 @@ public class MFLensflareEditor : Editor
                 EditorGUILayout.TextField("InScreen");
                 EditorGUILayout.TextField("Visible");
                 EditorGUILayout.TextField("SrcIndex");
-                // EditorGUILayout.TextField("DepthOnTex");
-                EditorGUILayout.TextField("RealDepth");
+                EditorGUILayout.TextField("DepthOnTex");
                 EditorGUILayout.TextField("LinearDist");
             }
             foreach (var pair in _target.ActiveDict)
