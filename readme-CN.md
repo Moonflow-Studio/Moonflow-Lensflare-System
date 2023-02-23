@@ -189,6 +189,24 @@
 
 
 
+### 项目自定义设置(！！！重要！！！)
+
+1. 屏内遮挡Fadeout生效的必要配置，在MFLensflare.cs的起始位置
+
+   ![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/QQ%E6%88%AA%E5%9B%BE20230224011330.png)
+
+   1. PIPELINE_DEPTH_TEX
+
+      项目中使用的深度RT名
+
+   2. Z_BUFFER_PARAMS
+
+      项目当前使用管线中使用的全局_ZBufferParam定义，详情参考官方文档
+
+   3. CAMERA_COMPARE_TAG
+
+      项目当前渲染3D场景的相机专有Tag，用于在正确的相机流程中识别遮挡
+
 ### 其他可选优化项/问题
 
 1. 基于Cinemachine的镜头移动导致光源计算位置未能及时同步

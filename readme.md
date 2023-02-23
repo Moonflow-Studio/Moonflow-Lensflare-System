@@ -190,7 +190,23 @@ Add _MFLensFlare_ component to your camera, now you can see flare render setting
 
 ​	It shows how much time will cost to disappear the flares after light source disappeared from screen.
 
+### Custom Settings in your project (IMPORTANT!!!!)
 
+1. At the front of MFLensflare.cs, you can see the nessesary configs of wake up fadeout function when light source is in the view but covered with nearer object
+
+   ![](https://raw.githubusercontent.com/Reguluz/ImageBed/master/QQ%E6%88%AA%E5%9B%BE20230224011330.png)
+
+   1. PIPELINE_DEPTH_TEX
+
+      The name of depth texture used in your project. Used to find the correct depth texture.
+
+   2. Z_BUFFER_PARAMS
+
+      Current ZBufferParams defined in your project. Try to search for more details about it in unity official documents.
+
+   3. CAMERA_COMPARE_TAG
+
+      The proprietary tag used by the camera which aimed to render 3D scene in your project. It is used to run compute shader at a correct time to calculate the occlusion.
 
 ### Some other optimized entries or questions
 
