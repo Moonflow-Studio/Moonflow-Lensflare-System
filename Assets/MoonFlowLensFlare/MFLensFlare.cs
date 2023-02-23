@@ -36,12 +36,23 @@ public class FlareStatusData
 
 public class MFLensFlare : MonoBehaviour
 {
+    //*********** Custom Settings***************
+    //Use your own depth texture used in your project
+    private static readonly int PIPELINE_DEPTH_TEX = Shader.PropertyToID("_CameraDepthTexture");
+    //Use the correct ZBufferParams used in your project
+    private static readonly int Z_BUFFER_PARAMS = Shader.PropertyToID("_ZBufferParams");
+    
+    //******************************************
+    
     public bool DebugMode;
     [Space(10)]
     public Material material;
     public float fadeoutTime;
     public ComputeShader cs_PrepareLightOcclusion;
     public Dictionary<MFFlareLauncher, FlareStatusData> FlareDict => _flareDict;
+    public Dictionary<MFFlareLauncher, FlareStatusData> ActiveDict => _activeFlareDict;
+    
+    
     private Dictionary<MFFlareLauncher, FlareStatusData> _flareDict;
     private Dictionary<MFFlareLauncher, FlareStatusData> _activeFlareDict;
     private Camera _camera;
@@ -54,7 +65,6 @@ public class MFLensFlare : MonoBehaviour
     
     private static readonly float DISTANCE = 1f;
     private int _csKernel;
-    // private Vector4 _csLightUVInt;
     private ComputeBuffer _cbLightOcclusionCheckBuffer;
     private ComputeBuffer _cbLightUVBuffer;
     public struct LightUV
@@ -63,14 +73,16 @@ public class MFLensFlare : MonoBehaviour
         public int y;
     }
     private LightUV[] _lightSourceUV;
-
     private float[] _lightSourceDepth = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
     private Queue<int> _emptyIndex = new Queue<int>();
     private static readonly int CS_LIGHT_UV = Shader.PropertyToID("_LightUV");
     private static readonly int CS_IS_LIGHT_OCCLUDED = Shader.PropertyToID("_LightSourceDepth");
     private static readonly int CS_DEPTHTEX_NAME = Shader.PropertyToID("_DepthTex");
-    //Use your own depth texture used in your project
-    private static readonly int PIPELINE_DEPTH_TEX = Shader.PropertyToID("_CameraDepthTexture");
+    private static readonly int Z_BUFFER_DELIVERED = Shader.PropertyToID("_ZBufferDelivered");
+
+#if UNITY_EDITOR
+    public float[] Editor_LightSrcDepth => _lightSourceDepth;
+#endif
     private void Awake()
     {
         _camera = GetComponent<Camera>();
@@ -252,10 +264,6 @@ public class MFLensFlare : MonoBehaviour
             CreateMesh(lightSource, ref flareStatusData);
             if(DebugMode)DebugDrawMeshPos(lightSource, flareStatusData);
         }
-        if (DebugMode)
-        {
-            Debug.Log("Lens Flare : " + _flareDict.Count + " lights");
-        }
     }
     
     void GetSourceCoordinate(MFFlareLauncher lightSource, ref FlareStatusData statusData)
@@ -303,16 +311,13 @@ public class MFLensFlare : MonoBehaviour
             screenUV.y = screenUV.y / _camera.pixelHeight;
             screenUV.w = lightSource.directionalLight ? 1 : 0;
             statusData.sourceScreenPos = screenUV;
+            
+            float worldSpaceDepth = _lightSourceDepth[statusData.srcIndex] /*+ _camera.nearClipPlane*/;
 
-            // _csLightUVInt = new Vector4((int)statusData.sourceCoordinate.x, (int)statusData.sourceCoordinate.y, 0, 0);
-        #if OPENGL
-            float scaledDepth = 1 - _lightSourceDepth[statusData.srcIndex];
-        #else
-            float scaledDepth = _lightSourceDepth[statusData.srcIndex];
-        #endif
             if (lightSource.directionalLight)
             {
-                if(scaledDepth >= 1)
+                //far away
+                if(worldSpaceDepth >= _camera.farClipPlane - _camera.nearClipPlane)
                 {
                     statusData.isVisible = true;
                 }
@@ -324,8 +329,8 @@ public class MFLensFlare : MonoBehaviour
             }
             else
             {
-                scaledDepth = (_camera.farClipPlane - _camera.nearClipPlane) * scaledDepth + _camera.nearClipPlane;
-                if(scaledDepth <= Vector3.Magnitude(lightSource.transform.position - _camera.transform.position))
+                //in front of what rendered on depth texture
+                if(worldSpaceDepth > Vector3.Magnitude(lightSource.transform.position - _camera.transform.position))
                 {
                     statusData.isVisible = true;
                 }
@@ -342,14 +347,14 @@ public class MFLensFlare : MonoBehaviour
     private void PrepareLightOcclusion()
     {
         DeliverUV();
-
         var depthTex = Shader.GetGlobalTexture(PIPELINE_DEPTH_TEX);
-
         cs_PrepareLightOcclusion.SetTexture(_csKernel, CS_DEPTHTEX_NAME, depthTex);
         _cbLightOcclusionCheckBuffer.SetData(_lightSourceDepth);
         _cbLightUVBuffer.SetData(_lightSourceUV);
         cs_PrepareLightOcclusion.SetBuffer(_csKernel, CS_IS_LIGHT_OCCLUDED, _cbLightOcclusionCheckBuffer);
         cs_PrepareLightOcclusion.SetBuffer(_csKernel, CS_LIGHT_UV, _cbLightUVBuffer);
+        var zBufferParam = Shader.GetGlobalVector(Z_BUFFER_PARAMS);
+        cs_PrepareLightOcclusion.SetVector(Z_BUFFER_DELIVERED, zBufferParam);
         cs_PrepareLightOcclusion.Dispatch(_csKernel, 1, 1, 1);
         _cbLightOcclusionCheckBuffer.GetData(_lightSourceDepth);
     }
@@ -369,13 +374,10 @@ public class MFLensFlare : MonoBehaviour
 
     private void AddRenderPass(ScriptableRenderContext context, Camera camera)
     {
-        // foreach (var cam in camera)
-        // {
         if (camera.gameObject.CompareTag("MainCamera"))
         {
             PrepareLightOcclusion();
         }
-        // }
     }
 
     void CalculateMeshData(MFFlareLauncher lightSource, ref FlareStatusData statusData)
@@ -494,6 +496,35 @@ public class MFLensflareEditor : Editor
         if (_target.FlareDict!=null && _target.FlareDict.Count != 0)
         {
             EditorGUILayout.LabelField("Light Count: ", _target.FlareDict.Count.ToString());
+        }
+        EditorGUILayout.Space();
+        if (_target.ActiveDict != null && _target.ActiveDict.Count != 0)
+        {
+            EditorGUIUtility.fieldWidth = 50;
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                EditorGUILayout.TextField("Dir");
+                EditorGUILayout.TextField("InScreen");
+                EditorGUILayout.TextField("Visible");
+                EditorGUILayout.TextField("SrcIndex");
+                // EditorGUILayout.TextField("DepthOnTex");
+                EditorGUILayout.TextField("RealDepth");
+                EditorGUILayout.TextField("LinearDist");
+            }
+            foreach (var pair in _target.ActiveDict)
+            {
+                using (new EditorGUILayout.HorizontalScope("box"))
+                {
+                    EditorGUILayout.TextField(pair.Key.directionalLight.ToString());
+                    EditorGUILayout.TextField(pair.Value.isInScreen.ToString());
+                    EditorGUILayout.TextField(pair.Value.isVisible.ToString());
+                    EditorGUILayout.TextField(pair.Value.srcIndex.ToString());
+                    float oDepth = _target.Editor_LightSrcDepth[pair.Value.srcIndex];
+                    EditorGUILayout.TextField(oDepth.ToString());
+                    var LinearDist = Vector3.Magnitude(pair.Key.transform.position - Camera.main.transform.position);
+                    EditorGUILayout.TextField(LinearDist.ToString());
+                }
+            }
         }
         base.OnInspectorGUI();
     }
