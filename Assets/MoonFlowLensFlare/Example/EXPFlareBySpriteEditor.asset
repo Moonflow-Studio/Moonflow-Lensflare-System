@@ -25,9 +25,9 @@ MonoBehaviour:
       y: 0.375
       width: 0.25
       height: 0.125
-    scale: 0.56
-    offset: 0.58
-    color: {r: 1, g: 1, b: 1, a: 1}
+    scale: 0.73
+    offset: 0.56
+    color: {r: 0.41509432, g: 0.41459802, b: 0.38572443, a: 1}
   - useLightColor: 0
     useRotation: 0
     index: 6
@@ -37,9 +37,9 @@ MonoBehaviour:
       y: 0
       width: 0.5
       height: 0.25
-    scale: 0.72
-    offset: 0.54
-    color: {r: 1, g: 1, b: 1, a: 1}
+    scale: 1.71
+    offset: -1.37
+    color: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 1}
   - useLightColor: 0
     useRotation: 0
     index: 4
@@ -49,6 +49,66 @@ MonoBehaviour:
       y: 0.25
       width: 0.25
       height: 0.125
-    scale: 17.33
-    offset: -0.82
-    color: {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
+    scale: 2.31
+    offset: -1.04
+    color: {r: 0.49056602, g: 0.49056602, b: 0.49056602, a: 1}
+  - useLightColor: 0
+    useRotation: 0
+    index: 8
+    block:
+      serializedVersion: 2
+      x: 0.5
+      y: 0
+      width: 0.25
+      height: 0.125
+    scale: 1
+    offset: 0.59
+    color: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
+  - useLightColor: 0
+    useRotation: 0
+    index: 0
+    block:
+      serializedVersion: 2
+      x: 0
+      y: 0.5
+      width: 1
+      height: 0.5
+    scale: 1.74
+    offset: 1
+    color: {r: 0.23584908, g: 0.23584908, b: 0.23584908, a: 1}
+  - useLightColor: 0
+    useRotation: 1
+    index: 10
+    block:
+      serializedVersion: 2
+      x: 0.75
+      y: 0
+      width: 0.25
+      height: 0.125
+    scale: 2.57
+    offset: -1.15
+    color: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
+  - useLightColor: 0
+    useRotation: 0
+    index: 9
+    block:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.125
+      width: 0.25
+      height: 0.125
+    scale: 1.98
+    offset: 0.46
+    color: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 1}
+  - useLightColor: 0
+    useRotation: 0
+    index: 4
+    block:
+      serializedVersion: 2
+      x: 0.75
+      y: 0.25
+      width: 0.25
+      height: 0.125
+    scale: 1
+    offset: -0.32
+    color: {r: 0.42866677, g: 0.5064845, b: 0.5377358, a: 1}

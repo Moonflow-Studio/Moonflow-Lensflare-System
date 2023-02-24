@@ -329,7 +329,7 @@ public class MFLensFlare : MonoBehaviour
             else
             {
                 //in front of what rendered on depth texture
-                if(worldSpaceDepth > Vector3.Magnitude(lightSource.transform.position - _camera.transform.position))
+                if(worldSpaceDepth > Vector3.Magnitude(lightSource.transform.position - _camera.transform.position) - _camera.nearClipPlane)
                 {
                     statusData.isVisible = true;
                 }

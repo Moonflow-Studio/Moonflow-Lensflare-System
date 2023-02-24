@@ -15,12 +15,12 @@ float LinearEyeDepth(float depth, float4 zBufferParam)
     return 1.0 / (zBufferParam.z * depth + zBufferParam.w);
 }
 
-[numthreads(1,1,1)]
+[numthreads(8,1,1)]
 void PrepareLightOcclusion (uint3 id : SV_DispatchThreadID)
 {
-    for (int i = 0; i < 8; i++)
-    {
-        _LightSourceDepth[i] = LinearEyeDepth(_DepthTex[uint2(_LightUV[i].x, _LightUV[i].y)].x, _ZBufferDelivered);
-    }
+    // for (int i = 0; i < 8; i++)
+    // {
+        _LightSourceDepth[id.x] = LinearEyeDepth(_DepthTex[uint2(_LightUV[id.x].x, _LightUV[id.x].y)].x, _ZBufferDelivered);
+    // }
 }
 

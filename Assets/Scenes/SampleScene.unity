@@ -326,7 +326,6 @@ GameObject:
   - component: {fileID: 1059168077}
   - component: {fileID: 1059168080}
   - component: {fileID: 1059168076}
-  - component: {fileID: 1059168081}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -346,11 +345,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba5498a1ba2bbb148808ccaaf09aba80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMode: 1
-  lightSource: []
+  DebugMode: 0
   material: {fileID: 2100000, guid: 86359d6fb0c493a4eb1ca246978cdf76, type: 2}
   fadeoutTime: 0.2
-  flareDatas: []
+  cs_PrepareLightOcclusion: {fileID: 7200000, guid: 7328d9e7e392e1948ace7a07012bdee2, type: 3}
 --- !u!81 &1059168077
 AudioListener:
   m_ObjectHideFlags: 0
@@ -448,29 +446,6 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
---- !u!114 &1059168081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1059168075}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3664695ee0b6bbc479918d1dbe3e54de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DebugMode: 0
-  lightSourceAsset: {fileID: 11400000, guid: 985e266db163b564c8edc91c0faffc2b, type: 2}
-  directionalLight: {fileID: 2093072686}
-  useLightIntensity: 0
-  material: {fileID: 2100000, guid: 86359d6fb0c493a4eb1ca246978cdf76, type: 2}
-  fadeoutTime: 0.2
-  flareData:
-    sourceCoordinate: {x: 0, y: 0, z: 0}
-    flareWorldPosCenter: []
-    fadeoutScale: 0
-    fadeState: 0
 --- !u!1 &1371742077
 GameObject:
   m_ObjectHideFlags: 0
@@ -502,8 +477,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   directionalLight: 0
-  useLightIntensity: 1
-  assetModel: {fileID: 11400000, guid: 985e266db163b564c8edc91c0faffc2b, type: 2}
+  useLightIntensity: 0
+  asset: {fileID: 11400000, guid: 985e266db163b564c8edc91c0faffc2b, type: 2}
   lightSource: {fileID: 1371742079}
 --- !u!108 &1371742079
 Light:
@@ -517,8 +492,8 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 0.62581736, b: 0.24056602, a: 1}
-  m_Intensity: 1
-  m_Range: 10
+  m_Intensity: 0.01
+  m_Range: 1
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -774,7 +749,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   directionalLight: 1
   useLightIntensity: 0
-  assetModel: {fileID: 11400000, guid: 985e266db163b564c8edc91c0faffc2b, type: 2}
+  asset: {fileID: 11400000, guid: 985e266db163b564c8edc91c0faffc2b, type: 2}
   lightSource: {fileID: 2093072686}
 --- !u!108 &2093072686
 Light:
